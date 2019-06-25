@@ -29,6 +29,7 @@ a reboot is required.
 1. clone this repository
    ```
    git clone https://github.com/gswly/raspberry-imu-tester
+   cd raspberry-imu-tester
    ```
 
 2. install dependencies
