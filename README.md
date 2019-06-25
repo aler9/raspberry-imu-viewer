@@ -28,8 +28,8 @@ a reboot is required.
 
 1. clone this repository
    ```
-   git clone https://github.com/gswly/raspberry-imu-tester
-   cd raspberry-imu-tester
+   git clone https://github.com/gswly/raspberry-imu-viewer
+   cd raspberry-imu-viewer
    ```
 
 2. install dependencies
@@ -48,7 +48,7 @@ a reboot is required.
 
 4. launch
    ```
-   ./raspberry-imu-tester
+   ./raspberry-imu-viewer
    ```
 
 
