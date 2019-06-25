@@ -55,7 +55,9 @@ a reboot is required.
 ## Links
 
 * MPU6050 datasheet
+
   https://store.invensense.com/datasheets/invensense/MPU-6050_DataSheet_V3%204.pdf
 
 * MPU6050 registers
+
   https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Register-Map1.pdf
