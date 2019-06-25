@@ -1,0 +1,22 @@
+
+BIN = raspberry-imu-viewer
+
+OBJECTS = $(patsubst %.c,%.o,$(wildcard *.c))
+
+CFLAGS += -Wall \
+	-O3 \
+	-I/opt/vc/include
+
+LDFLAGS += -L/opt/vc/lib \
+	-lbrcmGLESv2 \
+	-lbrcmEGL \
+	-lbcm_host \
+	-lm
+
+all: $(BIN)
+
+$(BIN): $(OBJECTS)
+	gcc $(OBJECTS) $(LDFLAGS) -o $@
+
+%.o: %.c
+	gcc $(CFLAGS) -c $< -o $@
