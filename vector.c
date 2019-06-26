@@ -38,11 +38,9 @@ void matrix_fill_rows(const vector* row1, const vector* row2, const vector* row3
     dest->aa = row1->x;
     dest->ab = row1->y;
     dest->ac = row1->z;
-
     dest->ba = row2->x;
     dest->bb = row2->y;
     dest->bc = row2->z;
-
     dest->ca = row3->x;
     dest->cb = row3->y;
     dest->cc = row3->z;
