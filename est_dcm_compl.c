@@ -26,6 +26,7 @@ void est_dcm_compl_init() {
     gyro_bias_init(&_e_d_compl->gyro_bias);
     align_dcm_init(&_e_d_compl->align);
 
+    // initial K points downwards
     _e_d_compl->prev_K.x = 0;
     _e_d_compl->prev_K.y = 0;
     _e_d_compl->prev_K.z = 1;
