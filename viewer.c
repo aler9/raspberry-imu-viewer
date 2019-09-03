@@ -14,7 +14,7 @@
 #define VISUALIZER_ROWS 2
 #define VISUALIZER_COLS 3
 
-const GLbyte vertex_ptr[6 * 4 * 3] = {
+static const GLbyte vertex_ptr[6 * 4 * 3] = {
     // face 1
    -5, -2,  10,
    5,  -2,  10,
@@ -47,7 +47,7 @@ const GLbyte vertex_ptr[6 * 4 * 3] = {
    5, -2, -10,
 };
 
-const GLfloat color_ptr[6 * 3] = {
+static const GLfloat color_ptr[6 * 3] = {
     1.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f,
     0.0f, 0.0f, 1.0f,
@@ -65,20 +65,20 @@ typedef struct {
     uint32_t screen_height;
 } _visualizer;
 
-_visualizer _vp, *_v = &_vp;
+static _visualizer _obj;
 
 void visualizer_init() {
-    memset(_v, 0, sizeof(_visualizer));
+    memset(&_obj, 0, sizeof(_visualizer));
 
     bcm_host_init();
 
-    _v->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-    assert(_v->display != EGL_NO_DISPLAY);
+    _obj.display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    assert(_obj.display != EGL_NO_DISPLAY);
 
-    EGLBoolean glres = eglInitialize(_v->display, NULL, NULL);
+    EGLBoolean glres = eglInitialize(_obj.display, NULL, NULL);
     assert(glres != EGL_FALSE);
 
-    const EGLint egl_attributes[] = {
+    EGLint egl_attributes[] = {
         EGL_RED_SIZE, 8,
         EGL_GREEN_SIZE, 8,
         EGL_BLUE_SIZE, 8,
@@ -89,26 +89,26 @@ void visualizer_init() {
 
     EGLConfig config;
     EGLint num_config;
-    glres = eglChooseConfig(_v->display, egl_attributes, &config, 1, &num_config);
+    glres = eglChooseConfig(_obj.display, egl_attributes, &config, 1, &num_config);
     assert(glres != EGL_FALSE);
 
-    _v->context = eglCreateContext(_v->display, config, EGL_NO_CONTEXT, NULL);
-    assert(_v->context != EGL_NO_CONTEXT);
+    _obj.context = eglCreateContext(_obj.display, config, EGL_NO_CONTEXT, NULL);
+    assert(_obj.context != EGL_NO_CONTEXT);
 
-    int32_t gres = graphics_get_display_size(0, &_v->screen_width, &_v->screen_height);
+    int32_t gres = graphics_get_display_size(0, &_obj.screen_width, &_obj.screen_height);
     assert(gres >= 0);
 
     VC_RECT_T dst_rect;
     dst_rect.x = 0;
     dst_rect.y = 0;
-    dst_rect.width = _v->screen_width;
-    dst_rect.height = _v->screen_height;
+    dst_rect.width = _obj.screen_width;
+    dst_rect.height = _obj.screen_height;
 
     VC_RECT_T src_rect;
     src_rect.x = 0;
     src_rect.y = 0;
-    src_rect.width = _v->screen_width << 16;
-    src_rect.height = _v->screen_height << 16;
+    src_rect.width = _obj.screen_width << 16;
+    src_rect.height = _obj.screen_height << 16;
 
     DISPMANX_DISPLAY_HANDLE_T dmx_display = vc_dispmanx_display_open(0);
     DISPMANX_UPDATE_HANDLE_T dmx_update = vc_dispmanx_update_start(0);
@@ -116,14 +116,14 @@ void visualizer_init() {
         dmx_update, dmx_display, 0, &dst_rect, 0, &src_rect, DISPMANX_PROTECTION_NONE, 0, 0, 0);
     vc_dispmanx_update_submit_sync(dmx_update);
 
-    _v->native_window.element = dmx_element;
-    _v->native_window.width = _v->screen_width;
-    _v->native_window.height = _v->screen_height;
+    _obj.native_window.element = dmx_element;
+    _obj.native_window.width = _obj.screen_width;
+    _obj.native_window.height = _obj.screen_height;
 
-    _v->surface = eglCreateWindowSurface(_v->display, config, &_v->native_window, NULL);
-    assert(_v->surface != EGL_NO_SURFACE);
+    _obj.surface = eglCreateWindowSurface(_obj.display, config, &_obj.native_window, NULL);
+    assert(_obj.surface != EGL_NO_SURFACE);
 
-    glres = eglMakeCurrent(_v->display, _v->surface, _v->surface, _v->context);
+    glres = eglMakeCurrent(_obj.display, _obj.surface, _obj.surface, _obj.context);
     assert(glres != EGL_FALSE);
 
     glClearColor(0.25f, 0.35f, 0.45f, 1.0f);
@@ -140,7 +140,7 @@ void visualizer_init() {
     float nearp = 1.0f;
     float farp = 500.0f;
     float hht = nearp * (float)tan(45.0 / 2.0 / 180.0 * M_PI);
-    float hwd = hht * (float)_v->screen_width / (float)_v->screen_height;
+    float hwd = hht * (float)_obj.screen_width / (float)_obj.screen_height;
     glFrustumf(-hwd, hwd, -hht, hht, nearp, farp);
 
     glMatrixMode(GL_MODELVIEW);
@@ -151,17 +151,17 @@ void visualizer_draw_start() {
 }
 
 void visualizer_draw_end() {
-    eglSwapBuffers(_v->display, _v->surface);
+    eglSwapBuffers(_obj.display, _obj.surface);
 }
 
 void visualizer_draw_estimate(int pos, estimator_output* eo) {
     int row = (pos / VISUALIZER_COLS);
     int col = (pos % VISUALIZER_COLS);
 
-    glViewport((GLsizei)_v->screen_width/VISUALIZER_COLS * col,
-        (GLsizei)_v->screen_height/VISUALIZER_ROWS * (VISUALIZER_ROWS - row - 1),
-        (GLsizei)_v->screen_width/VISUALIZER_COLS,
-        (GLsizei)_v->screen_height/VISUALIZER_ROWS);
+    glViewport((GLsizei)_obj.screen_width/VISUALIZER_COLS * col,
+        (GLsizei)_obj.screen_height/VISUALIZER_ROWS * (VISUALIZER_ROWS - row - 1),
+        (GLsizei)_obj.screen_width/VISUALIZER_COLS,
+        (GLsizei)_obj.screen_height/VISUALIZER_ROWS);
 
     glLoadIdentity();
     glTranslatef(0, 0, -40.0f);

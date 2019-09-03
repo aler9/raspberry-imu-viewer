@@ -17,24 +17,24 @@ typedef struct {
 
 } _est_euler_gyrounalign;
 
-_est_euler_gyrounalign _e_e_gyroup, *_e_e_gyrou = &_e_e_gyroup;
+static _est_euler_gyrounalign _obj;
 
 void est_euler_gyrounalign_init() {
-    memset(_e_e_gyrou, 0, sizeof(_est_euler_gyrounalign));
-    gyro_bias_init(&_e_e_gyrou->gyro_bias);
+    memset(&_obj, 0, sizeof(_est_euler_gyrounalign));
+    gyro_bias_init(&_obj.gyro_bias);
 }
 
 void est_euler_gyrounalign_do(const imu_output* io, double dt, estimator_output* eo) {
     vector tuned_gyro;
-    vector_diff(&io->gyro, &_e_e_gyrou->gyro_bias, &tuned_gyro);
+    vector_diff(&io->gyro, &_obj.gyro_bias, &tuned_gyro);
 
-    _e_e_gyrou->prev_roll = _e_e_gyrou->prev_roll + tuned_gyro.x*dt;
-    _e_e_gyrou->prev_pitch = _e_e_gyrou->prev_pitch + tuned_gyro.y*dt;
-    _e_e_gyrou->prev_yaw = _e_e_gyrou->prev_yaw + tuned_gyro.z*dt;
+    _obj.prev_roll = _obj.prev_roll + tuned_gyro.x*dt;
+    _obj.prev_pitch = _obj.prev_pitch + tuned_gyro.y*dt;
+    _obj.prev_yaw = _obj.prev_yaw + tuned_gyro.z*dt;
 
-    eo->roll = _e_e_gyrou->prev_roll;
-    eo->pitch = _e_e_gyrou->prev_pitch;
-    // eo->yaw = _e_e_gyrou->prev_yaw;
+    eo->roll = _obj.prev_roll;
+    eo->pitch = _obj.prev_pitch;
+    // eo->yaw = _obj.prev_yaw;
     // do not use yaw, such that the result can be compared with other estimators
     eo->yaw = 0;
 }

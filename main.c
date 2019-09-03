@@ -14,7 +14,7 @@
 #include "est_euler_compl.h"
 #include "est_dcm_compl.h"
 
-inline uint32_t clock_usec() {
+static uint32_t clock_usec() {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
     return ts.tv_sec * 1000000 + ts.tv_nsec / 1000;

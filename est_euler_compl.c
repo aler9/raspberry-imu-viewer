@@ -20,31 +20,31 @@ typedef struct {
 
 } _est_euler_compl;
 
-_est_euler_compl _e_e_complp, *_e_e_compl = &_e_e_complp;
+static _est_euler_compl _obj;
 
 void est_euler_compl_init() {
-    memset(_e_e_compl, 0, sizeof(_est_euler_compl));
-    gyro_bias_init(&_e_e_compl->gyro_bias);
-    align_dcm_init(&_e_e_compl->align);
+    memset(&_obj, 0, sizeof(_est_euler_compl));
+    gyro_bias_init(&_obj.gyro_bias);
+    align_dcm_init(&_obj.align);
 }
 
 void est_euler_compl_do(const imu_output* io, double dt, estimator_output* eo) {
     vector aligned_acc;
-    matrix_multiply(&_e_e_compl->align, &io->acc, &aligned_acc);
+    matrix_multiply(&_obj.align, &io->acc, &aligned_acc);
 
     vector tuned_gyro;
-    vector_diff(&io->gyro, &_e_e_compl->gyro_bias, &tuned_gyro);
+    vector_diff(&io->gyro, &_obj.gyro_bias, &tuned_gyro);
 
     vector aligned_gyro;
-    matrix_multiply(&_e_e_compl->align, &tuned_gyro, &aligned_gyro);
+    matrix_multiply(&_obj.align, &tuned_gyro, &aligned_gyro);
 
     double acc_roll = atan2(aligned_acc.y, aligned_acc.z);
     double acc_pitch = -atan2(aligned_acc.x, sqrt(aligned_acc.y*aligned_acc.y + aligned_acc.z*aligned_acc.z));
 
-    _e_e_compl->prev_roll = acc_roll*EULER_COMPL_ALPHA + (1 - EULER_COMPL_ALPHA)*(_e_e_compl->prev_roll + aligned_gyro.x * dt);
-    _e_e_compl->prev_pitch = acc_pitch*EULER_COMPL_ALPHA + (1 - EULER_COMPL_ALPHA)*(_e_e_compl->prev_pitch + aligned_gyro.y * dt);
+    _obj.prev_roll = acc_roll*EULER_COMPL_ALPHA + (1 - EULER_COMPL_ALPHA)*(_obj.prev_roll + aligned_gyro.x * dt);
+    _obj.prev_pitch = acc_pitch*EULER_COMPL_ALPHA + (1 - EULER_COMPL_ALPHA)*(_obj.prev_pitch + aligned_gyro.y * dt);
 
-    eo->roll = _e_e_compl->prev_roll;
-    eo->pitch = _e_e_compl->prev_pitch;
+    eo->roll = _obj.prev_roll;
+    eo->pitch = _obj.prev_pitch;
     eo->yaw = 0;
 }

@@ -1,6 +1,4 @@
 
-TARGET = pi@192.168.2.224
-
 all: deploy
 
 build_standard:
@@ -9,6 +7,8 @@ build_standard:
 build_cross:
 	docker run --rm --privileged multiarch/qemu-user-static:register --reset --credential yes >/dev/null
 	docker build . -t temp
+
+TARGET = pi@192.168.2.224
 
 deploy: build_cross
 	ssh $(TARGET) "killall raspberry-imu-viewer || exit 0"

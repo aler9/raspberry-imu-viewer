@@ -68,28 +68,28 @@ typedef struct {
     int fd;
 } _imu;
 
-_imu _ip, *_i = &_ip;
+static _imu _obj;
 
-int16_t _imu_read_int16(int address) {
-    return i2c_smbus_read_byte_data(_i->fd, address) << 8 |
-        i2c_smbus_read_byte_data(_i->fd, address + 1);
+static int16_t _imu_read_int16(int address) {
+    return i2c_smbus_read_byte_data(_obj.fd, address) << 8 |
+        i2c_smbus_read_byte_data(_obj.fd, address + 1);
 }
 
 void imu_init() {
-    memset(_i, 0, sizeof(_imu));
+    memset(&_obj, 0, sizeof(_imu));
 
-    _i->fd = open("/dev/i2c-1", O_RDWR);
-    assert(_i->fd >= 0);
+    _obj.fd = open("/dev/i2c-1", O_RDWR);
+    assert(_obj.fd >= 0);
 
-    int res = ioctl(_i->fd, I2C_SLAVE, IMU_ADDRESS);
+    int res = ioctl(_obj.fd, I2C_SLAVE, IMU_ADDRESS);
     assert(res >= 0);
 
-    uint8_t who_am_i = i2c_smbus_read_byte_data(_i->fd, IMU_WHO_AM_I);
+    uint8_t who_am_i = i2c_smbus_read_byte_data(_obj.fd, IMU_WHO_AM_I);
     assert(who_am_i == 0x68);
 
-    i2c_smbus_write_byte_data(_i->fd, IMU_POWER1, IMU_BIT_DISABLE_TEMP);
-    i2c_smbus_write_byte_data(_i->fd, IMU_ACC_CONFIG, IMU_ACC_CONFIG_VALUE);
-    i2c_smbus_write_byte_data(_i->fd, IMU_GYRO_CONFIG, IMU_GYRO_CONFIG_VALUE);
+    i2c_smbus_write_byte_data(_obj.fd, IMU_POWER1, IMU_BIT_DISABLE_TEMP);
+    i2c_smbus_write_byte_data(_obj.fd, IMU_ACC_CONFIG, IMU_ACC_CONFIG_VALUE);
+    i2c_smbus_write_byte_data(_obj.fd, IMU_GYRO_CONFIG, IMU_GYRO_CONFIG_VALUE);
 }
 
 void imu_read(imu_output* r) {
