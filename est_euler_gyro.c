@@ -9,20 +9,17 @@
 #include "est.h"
 #include "est_euler_gyro.h"
 
-typedef struct {
+static struct {
     vector gyro_bias;
     matrix align;
 
     double prev_roll;
     double prev_pitch;
     double prev_yaw;
-
-} _est_euler_gyro;
-
-static _est_euler_gyro _obj;
+} _obj;
 
 void est_euler_gyro_init() {
-    memset(&_obj, 0, sizeof(_est_euler_gyro));
+    memset(&_obj, 0, sizeof(_obj));
     gyro_bias_init(&_obj.gyro_bias);
     align_dcm_init(&_obj.align);
 }

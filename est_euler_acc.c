@@ -10,18 +10,15 @@
 
 #define ACC_SMOOTHING_ALPHA 0.4f
 
-typedef struct {
+static struct {
     matrix align;
 
     double prev_roll;
     double prev_pitch;
-
-} _est_euler_acc;
-
-static _est_euler_acc _obj;
+} _obj;
 
 void est_euler_acc_init() {
-    memset(&_obj, 0, sizeof(_est_euler_acc));
+    memset(&_obj, 0, sizeof(_obj));
     align_dcm_init(&_obj.align);
 }
 

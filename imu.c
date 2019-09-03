@@ -64,11 +64,9 @@
 #define IMU_ACCY 0x3d
 #define IMU_ACCZ 0x3f
 
-typedef struct {
+static struct {
     int fd;
-} _imu;
-
-static _imu _obj;
+} _obj;
 
 static int16_t _imu_read_int16(int address) {
     return i2c_smbus_read_byte_data(_obj.fd, address) << 8 |
@@ -76,7 +74,7 @@ static int16_t _imu_read_int16(int address) {
 }
 
 void imu_init() {
-    memset(&_obj, 0, sizeof(_imu));
+    memset(&_obj, 0, sizeof(_obj));
 
     _obj.fd = open("/dev/i2c-1", O_RDWR);
     assert(_obj.fd >= 0);

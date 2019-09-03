@@ -56,19 +56,17 @@ static const GLfloat color_ptr[6 * 3] = {
     1.0f, 0.0f, 1.0f,
 };
 
-typedef struct {
+static struct {
     EGLDisplay display;
     EGLContext context;
     EGLSurface surface;
     EGL_DISPMANX_WINDOW_T native_window;
     uint32_t screen_width;
     uint32_t screen_height;
-} _visualizer;
-
-static _visualizer _obj;
+} _obj;
 
 void visualizer_init() {
-    memset(&_obj, 0, sizeof(_visualizer));
+    memset(&_obj, 0, sizeof(_obj));
 
     bcm_host_init();
 

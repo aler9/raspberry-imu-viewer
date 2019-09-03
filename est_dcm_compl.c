@@ -11,18 +11,15 @@
 
 #define DCM_COMPL_ALPHA 0.1f
 
-typedef struct {
+static struct {
     vector gyro_bias;
     matrix align;
 
     vector prev_K;
-
-} _est_dcm_compl;
-
-static _est_dcm_compl _obj;
+} _obj;
 
 void est_dcm_compl_init() {
-    memset(&_obj, 0, sizeof(_est_dcm_compl));
+    memset(&_obj, 0, sizeof(_obj));
     gyro_bias_init(&_obj.gyro_bias);
     align_dcm_init(&_obj.align);
 

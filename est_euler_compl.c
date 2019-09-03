@@ -11,19 +11,16 @@
 
 #define EULER_COMPL_ALPHA 0.1f
 
-typedef struct {
+static struct {
     vector gyro_bias;
     matrix align;
 
     double prev_roll;
     double prev_pitch;
-
-} _est_euler_compl;
-
-static _est_euler_compl _obj;
+} _obj;
 
 void est_euler_compl_init() {
-    memset(&_obj, 0, sizeof(_est_euler_compl));
+    memset(&_obj, 0, sizeof(_obj));
     gyro_bias_init(&_obj.gyro_bias);
     align_dcm_init(&_obj.align);
 }
