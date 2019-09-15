@@ -68,7 +68,7 @@ static struct {
     int fd;
 } _obj;
 
-static int16_t _imu_read_int16(int address) {
+static int16_t read_int16(int address) {
     return i2c_smbus_read_byte_data(_obj.fd, address) << 8 |
         i2c_smbus_read_byte_data(_obj.fd, address + 1);
 }
@@ -91,10 +91,10 @@ void imu_init() {
 }
 
 void imu_read(imu_output* r) {
-    r->acc.x = - (double)_imu_read_int16(IMU_ACCX) / IMU_ACC_SSF;
-    r->acc.y = (double)_imu_read_int16(IMU_ACCY) / IMU_ACC_SSF;
-    r->acc.z = (double)_imu_read_int16(IMU_ACCZ) / IMU_ACC_SSF;
-    r->gyro.x = (double)_imu_read_int16(IMU_GYROX) / IMU_GYRO_SSF;
-    r->gyro.y = - (double)_imu_read_int16(IMU_GYROY) / IMU_GYRO_SSF;
-    r->gyro.z = (double)_imu_read_int16(IMU_GYROZ) / IMU_GYRO_SSF;
+    r->acc.x = - (double)read_int16(IMU_ACCX) / IMU_ACC_SSF;
+    r->acc.y = (double)read_int16(IMU_ACCY) / IMU_ACC_SSF;
+    r->acc.z = (double)read_int16(IMU_ACCZ) / IMU_ACC_SSF;
+    r->gyro.x = (double)read_int16(IMU_GYROX) / IMU_GYRO_SSF;
+    r->gyro.y = - (double)read_int16(IMU_GYROY) / IMU_GYRO_SSF;
+    r->gyro.z = (double)read_int16(IMU_GYROZ) / IMU_GYRO_SSF;
 }
