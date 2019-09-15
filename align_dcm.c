@@ -3,21 +3,21 @@
 #include "imu.h"
 #include "align_dcm.h"
 
-#define ALIGN_SAMPLE_COUNT 500
+#define SAMPLE_COUNT 500
 
 void align_dcm_init(matrix* align) {
     // sample accelerometers and get K
     vector vK;
     imu_output io;
-    for(int i = 0; i < ALIGN_SAMPLE_COUNT; i++) {
+    for(int i = 0; i < SAMPLE_COUNT; i++) {
         imu_read(&io);
         vK.x += io.acc.x;
         vK.y += io.acc.y;
         vK.z += io.acc.z;
     }
-    vK.x /= ALIGN_SAMPLE_COUNT;
-    vK.y /= ALIGN_SAMPLE_COUNT;
-    vK.z /= ALIGN_SAMPLE_COUNT;
+    vK.x /= SAMPLE_COUNT;
+    vK.y /= SAMPLE_COUNT;
+    vK.z /= SAMPLE_COUNT;
 
     // normalize K
     vector_normalize(&vK);

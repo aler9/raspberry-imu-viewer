@@ -8,7 +8,7 @@
 #include "est.h"
 #include "est_euler_acc.h"
 
-#define ACC_SMOOTHING_ALPHA 0.4f
+#define ALPHA 0.4f
 
 static struct {
     matrix align;
@@ -29,8 +29,8 @@ void est_euler_acc_do(const imu_output* io, double dt, estimator_output* eo) {
     double cur_roll = atan2(aligned_acc.y, aligned_acc.z);
     double cur_pitch = -atan2(aligned_acc.x, sqrt(aligned_acc.y*aligned_acc.y + aligned_acc.z*aligned_acc.z));
 
-    _obj.prev_roll = _obj.prev_roll*(1 - ACC_SMOOTHING_ALPHA) + ACC_SMOOTHING_ALPHA*cur_roll;
-    _obj.prev_pitch = _obj.prev_pitch*(1 - ACC_SMOOTHING_ALPHA) + ACC_SMOOTHING_ALPHA*cur_pitch;
+    _obj.prev_roll = _obj.prev_roll*(1 - ALPHA) + ALPHA*cur_roll;
+    _obj.prev_pitch = _obj.prev_pitch*(1 - ALPHA) + ALPHA*cur_pitch;
 
     eo->roll = _obj.prev_roll;
     eo->pitch = _obj.prev_pitch;

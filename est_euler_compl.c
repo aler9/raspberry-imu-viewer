@@ -9,7 +9,7 @@
 #include "est.h"
 #include "est_euler_compl.h"
 
-#define EULER_COMPL_ALPHA 0.1f
+#define ALPHA 0.1f
 
 static struct {
     vector gyro_bias;
@@ -38,8 +38,8 @@ void est_euler_compl_do(const imu_output* io, double dt, estimator_output* eo) {
     double acc_roll = atan2(aligned_acc.y, aligned_acc.z);
     double acc_pitch = -atan2(aligned_acc.x, sqrt(aligned_acc.y*aligned_acc.y + aligned_acc.z*aligned_acc.z));
 
-    _obj.prev_roll = acc_roll*EULER_COMPL_ALPHA + (1 - EULER_COMPL_ALPHA)*(_obj.prev_roll + aligned_gyro.x * dt);
-    _obj.prev_pitch = acc_pitch*EULER_COMPL_ALPHA + (1 - EULER_COMPL_ALPHA)*(_obj.prev_pitch + aligned_gyro.y * dt);
+    _obj.prev_roll = acc_roll*ALPHA + (1 - ALPHA)*(_obj.prev_roll + aligned_gyro.x * dt);
+    _obj.prev_pitch = acc_pitch*ALPHA + (1 - ALPHA)*(_obj.prev_pitch + aligned_gyro.y * dt);
 
     eo->roll = _obj.prev_roll;
     eo->pitch = _obj.prev_pitch;

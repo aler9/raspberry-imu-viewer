@@ -11,8 +11,8 @@
 #include "est.h"
 #include "viewer.h"
 
-#define VISUALIZER_ROWS 2
-#define VISUALIZER_COLS 3
+#define ROWS 2
+#define COLS 3
 
 static const GLbyte vertex_ptr[6 * 4 * 3] = {
     // face 1
@@ -153,13 +153,13 @@ void visualizer_draw_end() {
 }
 
 void visualizer_draw_estimate(int pos, estimator_output* eo) {
-    int row = (pos / VISUALIZER_COLS);
-    int col = (pos % VISUALIZER_COLS);
+    int row = (pos / COLS);
+    int col = (pos % COLS);
 
-    glViewport((GLsizei)_obj.screen_width/VISUALIZER_COLS * col,
-        (GLsizei)_obj.screen_height/VISUALIZER_ROWS * (VISUALIZER_ROWS - row - 1),
-        (GLsizei)_obj.screen_width/VISUALIZER_COLS,
-        (GLsizei)_obj.screen_height/VISUALIZER_ROWS);
+    glViewport((GLsizei)_obj.screen_width/COLS * col,
+        (GLsizei)_obj.screen_height/ROWS * (ROWS - row - 1),
+        (GLsizei)_obj.screen_width/COLS,
+        (GLsizei)_obj.screen_height/ROWS);
 
     glLoadIdentity();
     glTranslatef(0, 0, -40.0f);

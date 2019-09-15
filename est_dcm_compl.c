@@ -9,7 +9,7 @@
 #include "est.h"
 #include "est_dcm_compl.h"
 
-#define DCM_COMPL_ALPHA 0.1f
+#define ALPHA 0.1f
 
 static struct {
     vector gyro_bias;
@@ -53,9 +53,9 @@ void est_dcm_compl_do(const imu_output* io, double dt, estimator_output* eo) {
     gyro_K.z += dt * gyro_dK.z;
 
     // filter
-    _obj.prev_K.x = DCM_COMPL_ALPHA*acc_K.x + (1 - DCM_COMPL_ALPHA)*gyro_K.x;
-    _obj.prev_K.y = DCM_COMPL_ALPHA*acc_K.y + (1 - DCM_COMPL_ALPHA)*gyro_K.y;
-    _obj.prev_K.z = DCM_COMPL_ALPHA*acc_K.z + (1 - DCM_COMPL_ALPHA)*gyro_K.z;
+    _obj.prev_K.x = ALPHA*acc_K.x + (1 - ALPHA)*gyro_K.x;
+    _obj.prev_K.y = ALPHA*acc_K.y + (1 - ALPHA)*gyro_K.y;
+    _obj.prev_K.z = ALPHA*acc_K.z + (1 - ALPHA)*gyro_K.z;
 
     // normalize
     vector_normalize(&_obj.prev_K);
