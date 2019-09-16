@@ -6,7 +6,10 @@
 This tool allows to view in 3D the output of various orientation estimation algorithms, fed by a IMU sensor, connected to a Raspberry Pi. Supported sensors are:
 * MPU6000 (I2C mode)
 * MPU6050 (I2C mode)
+* MPU6500 (I2C mode)
 * ICM20600 (I2C mode)
+* ICM20601 (I2C mode)
+* ICM20602 (I2C mode)
 
 This tool is intended to:
 * provide a zero-dependencies, ready-to-use tool to test IMUs
