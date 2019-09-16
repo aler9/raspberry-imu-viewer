@@ -1,52 +1,54 @@
 
 # raspberry-imu-viewer
 
-![](assets/front.jpg)
+![](front.jpg)
 
-This tool allows to visualize in 3D the output of various orientation estimation algorithms on a Raspberry Pi, connected via I2C to a MPU6050.
+This tool allows to view in 3D the output of various orientation estimation algorithms, fed by a IMU sensor, connected to a Raspberry Pi. Supported sensors are:
+* MPU6000 (I2C mode)
+* MPU6050 (I2C mode)
+* ICM20600 (I2C mode)
 
-The algorithms are a work in progress, but since the tool works well and there aren't many alternatives around, it is published in order to provide a help for anyone wishing to explore the field of orientation estimation.
-
-
-## Prerequisites
-
-On the Raspberry Pi, enable I2C in fast-speed mode: edit `/boot/config.txt` and add
-```
-dtparam=i2c_arm=on
-dtparam=i2c_arm_baudrate=400000
-```
-
-then edit `/etc/modules` and add
-```
-i2c-dev
-```
-
-a reboot is required.
+This tool is intended to:
+* provide a zero-dependencies, ready-to-use tool to test IMUs
+* provide a starting point for anyone wishing to explore the field of orientation estimation
 
 
-## Compile & launch
+## Build & launch
 
-1. clone this repository
+1. On the Raspberry Pi, enable I2C in fast-speed mode: edit `/boot/config.txt` and add
+   ```
+   dtparam=i2c_arm=on
+   dtparam=i2c_arm_baudrate=400000
+   ```
+
+   then edit `/etc/modules` and add
+   ```
+   i2c-dev
+   ```
+
+   a reboot is required.
+
+2. clone this repository
    ```
    git clone https://github.com/gswly/raspberry-imu-viewer
    cd raspberry-imu-viewer
    ```
 
-2. install dependencies
+3. install dependencies
    ```
-   sudo apt-get install -y make \
+   sudo apt install -y make \
    gcc \
    libc6-dev \
    libi2c-dev \
    libraspberrypi-dev
    ```
 
-2. build
+4. build
    ```
-   make build_standard
+   make
    ```
 
-4. launch
+5. launch
    ```
    ./raspberry-imu-viewer
    ```
