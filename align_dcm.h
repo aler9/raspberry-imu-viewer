@@ -1,4 +1,4 @@
 
 #pragma once
 
-void align_dcm_init(matrix* align);
+void align_dcm_init(matrix* align, imut* imu);

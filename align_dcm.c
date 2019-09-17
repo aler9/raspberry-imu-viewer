@@ -1,16 +1,17 @@
 
+#include "error.h"
 #include "vector.h"
 #include "imu.h"
 #include "align_dcm.h"
 
 #define SAMPLE_COUNT 500
 
-void align_dcm_init(matrix* align) {
+void align_dcm_init(matrix* align, imut* imu) {
     // sample accelerometers and get K
     vector vK;
     imu_output io;
     for(int i = 0; i < SAMPLE_COUNT; i++) {
-        imu_read(&io);
+        imu_read(imu, &io);
         vK.x += io.acc.x;
         vK.y += io.acc.y;
         vK.z += io.acc.z;

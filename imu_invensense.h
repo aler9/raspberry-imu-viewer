@@ -15,6 +15,8 @@ typedef enum {
     INVENSENSE_GYRO_2000,
 } invensense_gyro_range;
 
-void* imu_invensense_init(int fd, invensense_acc_range acc_range,
+typedef void imu_invensense;
+
+error* imu_invensense_init(imu_invensense** pobj, int fd, invensense_acc_range acc_range,
     invensense_gyro_range gyro_range);
 void imu_invensense_read(void* obj, imu_output* r);

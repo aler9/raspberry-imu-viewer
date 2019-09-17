@@ -2,6 +2,7 @@
 #include <string.h>
 #include <math.h>
 
+#include "error.h"
 #include "vector.h"
 #include "imu.h"
 #include "align_dcm.h"
@@ -11,33 +12,39 @@
 
 #define ALPHA 0.1f
 
-static struct {
+typedef struct {
     vector gyro_bias;
     matrix align;
-
     vector prev_K;
-} _obj;
+} _objt;
 
-void est_dcm_compl_init() {
-    memset(&_obj, 0, sizeof(_obj));
-    gyro_bias_init(&_obj.gyro_bias);
-    align_dcm_init(&_obj.align);
+error* est_dcm_compl_init(est_dcm_complt** pobj, imut* imu) {
+    _objt* _obj = malloc(sizeof(_objt));
+
+    gyro_bias_init(&_obj->gyro_bias, imu);
+    align_dcm_init(&_obj->align, imu);
 
     // initial K points downwards
-    _obj.prev_K.x = 0;
-    _obj.prev_K.y = 0;
-    _obj.prev_K.z = 1;
+    _obj->prev_K.x = 0;
+    _obj->prev_K.y = 0;
+    _obj->prev_K.z = 1;
+
+    *pobj = _obj;
+    return NULL;
 }
 
-void est_dcm_compl_do(const imu_output* io, double dt, estimator_output* eo) {
+void est_dcm_compl_do(est_dcm_complt* obj, const imu_output* io, double dt,
+    estimator_output* eo) {
+    _objt* _obj = (_objt*)obj;
+
     vector aligned_acc;
-    matrix_multiply(&_obj.align, &io->acc, &aligned_acc);
+    matrix_multiply(&_obj->align, &io->acc, &aligned_acc);
 
     vector tuned_gyro;
-    vector_diff(&io->gyro, &_obj.gyro_bias, &tuned_gyro);
+    vector_diff(&io->gyro, &_obj->gyro_bias, &tuned_gyro);
 
     vector aligned_gyro;
-    matrix_multiply(&_obj.align, &tuned_gyro, &aligned_gyro);
+    matrix_multiply(&_obj->align, &tuned_gyro, &aligned_gyro);
 
     // get K from accelerometers
     vector acc_K;
@@ -46,21 +53,21 @@ void est_dcm_compl_do(const imu_output* io, double dt, estimator_output* eo) {
     // get K from gyroscopes
     vector gyro_dK;
     vector gyro_K;
-    vector_cross(&_obj.prev_K, &aligned_gyro, &gyro_dK);
-    vector_copy(&_obj.prev_K, &gyro_K);
+    vector_cross(&_obj->prev_K, &aligned_gyro, &gyro_dK);
+    vector_copy(&_obj->prev_K, &gyro_K);
     gyro_K.x += dt * gyro_dK.x;
     gyro_K.y += dt * gyro_dK.y;
     gyro_K.z += dt * gyro_dK.z;
 
     // filter
-    _obj.prev_K.x = ALPHA*acc_K.x + (1 - ALPHA)*gyro_K.x;
-    _obj.prev_K.y = ALPHA*acc_K.y + (1 - ALPHA)*gyro_K.y;
-    _obj.prev_K.z = ALPHA*acc_K.z + (1 - ALPHA)*gyro_K.z;
+    _obj->prev_K.x = ALPHA*acc_K.x + (1 - ALPHA)*gyro_K.x;
+    _obj->prev_K.y = ALPHA*acc_K.y + (1 - ALPHA)*gyro_K.y;
+    _obj->prev_K.z = ALPHA*acc_K.z + (1 - ALPHA)*gyro_K.z;
 
     // normalize
-    vector_normalize(&_obj.prev_K);
+    vector_normalize(&_obj->prev_K);
 
-    eo->roll = atan2(_obj.prev_K.y, _obj.prev_K.z);
-    eo->pitch = -asin(_obj.prev_K.x);
+    eo->roll = atan2(_obj->prev_K.y, _obj->prev_K.z);
+    eo->pitch = -asin(_obj->prev_K.x);
     eo->yaw = 0;
 }

@@ -1,10 +1,7 @@
 
 #pragma once
 
-typedef struct {
-    vector acc;
-    vector gyro;
-} imu_output;
+typedef void imut;
 
-void imu_init();
-void imu_read(imu_output* r);
+error* imu_init(imut** pobj);
+void imu_read(imut* obj, imu_output* r);

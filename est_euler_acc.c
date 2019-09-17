@@ -2,6 +2,7 @@
 #include <string.h>
 #include <math.h>
 
+#include "error.h"
 #include "vector.h"
 #include "imu.h"
 #include "align_dcm.h"
@@ -10,29 +11,36 @@
 
 #define ALPHA 0.4f
 
-static struct {
+typedef struct {
     matrix align;
-
     double prev_roll;
     double prev_pitch;
-} _obj;
+} _objt;
 
-void est_euler_acc_init() {
-    memset(&_obj, 0, sizeof(_obj));
-    align_dcm_init(&_obj.align);
+error* est_euler_acc_init(est_euler_acct** pobj, imut* imu) {
+    _objt* _obj = malloc(sizeof(_objt));
+
+    align_dcm_init(&_obj->align, imu);
+    _obj->prev_roll = 0;
+    _obj->prev_pitch = 0;
+
+    *pobj = _obj;
+    return NULL;
 }
 
-void est_euler_acc_do(const imu_output* io, double dt, estimator_output* eo) {
+void est_euler_acc_do(est_euler_acct* obj, const imu_output* io, double dt, estimator_output* eo) {
+    _objt* _obj = (_objt*)obj;
+
     vector aligned_acc;
-    matrix_multiply(&_obj.align, &io->acc, &aligned_acc);
+    matrix_multiply(&_obj->align, &io->acc, &aligned_acc);
 
     double cur_roll = atan2(aligned_acc.y, aligned_acc.z);
     double cur_pitch = -atan2(aligned_acc.x, sqrt(aligned_acc.y*aligned_acc.y + aligned_acc.z*aligned_acc.z));
 
-    _obj.prev_roll = _obj.prev_roll*(1 - ALPHA) + ALPHA*cur_roll;
-    _obj.prev_pitch = _obj.prev_pitch*(1 - ALPHA) + ALPHA*cur_pitch;
+    _obj->prev_roll = _obj->prev_roll*(1 - ALPHA) + ALPHA*cur_roll;
+    _obj->prev_pitch = _obj->prev_pitch*(1 - ALPHA) + ALPHA*cur_pitch;
 
-    eo->roll = _obj.prev_roll;
-    eo->pitch = _obj.prev_pitch;
+    eo->roll = _obj->prev_roll;
+    eo->pitch = _obj->prev_pitch;
     eo->yaw = 0;
 }

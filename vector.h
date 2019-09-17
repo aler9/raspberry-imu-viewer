@@ -8,6 +8,11 @@ typedef struct {
 } vector;
 
 typedef struct {
+    vector acc;
+    vector gyro;
+} imu_output;
+
+typedef struct {
     double aa;
     double ab;
     double ac;

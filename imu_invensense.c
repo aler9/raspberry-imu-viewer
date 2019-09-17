@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <unistd.h>
 
+#include "error.h"
 #include "vector.h"
-#include "imu.h"
 #include "imu_invensense.h"
 
 #define POWERMAN1 0x6B
@@ -21,9 +21,10 @@ typedef struct {
     double acc_ssf;
 } _objt;
 
-void* imu_invensense_init(int fd, invensense_acc_range acc_range,
+error* imu_invensense_init(imu_invensense** pobj, int fd, invensense_acc_range acc_range,
     invensense_gyro_range gyro_range) {
     _objt* _obj = malloc(sizeof(_objt));
+
     _obj->fd = fd;
 
     uint8_t acc_conf = 0;
@@ -88,7 +89,8 @@ void* imu_invensense_init(int fd, invensense_acc_range acc_range,
     cmd[1] = gyro_conf;
     write(_obj->fd, cmd, 2);
 
-    return _obj;
+    *pobj = _obj;
+    return NULL;
 }
 
 static inline int16_t make_int16(uint8_t high, uint8_t low) {
@@ -97,6 +99,7 @@ static inline int16_t make_int16(uint8_t high, uint8_t low) {
 
 void imu_invensense_read(void* obj, imu_output* r) {
     _objt* _obj = (_objt*)obj;
+
     uint8_t cmd;
     uint8_t out[6];
 

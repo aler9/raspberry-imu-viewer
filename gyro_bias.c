@@ -1,16 +1,17 @@
 
 #include <stdio.h>
 
+#include "error.h"
 #include "vector.h"
 #include "imu.h"
 #include "gyro_bias.h"
 
 #define SAMPLE_COUNT 500
 
-void gyro_bias_init(vector* gyro_bias) {
+void gyro_bias_init(vector* gyro_bias, imut* imu) {
     imu_output io;
     for(int i = 0; i < SAMPLE_COUNT; i++) {
-        imu_read(&io);
+        imu_read(imu, &io);
         gyro_bias->x += io.gyro.x;
         gyro_bias->y += io.gyro.y;
         gyro_bias->z += io.gyro.z;
