@@ -4,6 +4,8 @@
 #include <time.h>
 #include <math.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #include "error.h"
 #include "vector.h"
@@ -22,57 +24,56 @@ static uint32_t clock_usec() {
     return ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
 }
 
-int main() {
+static error* run() {
     // disable stdout buffering
     setbuf(stdout, NULL);
 
+    int i2c_fd = open("/dev/i2c-1", O_RDWR);
+    if(i2c_fd < 0) {
+        return "unable to open device /dev/i2c-1";
+    }
+
     imut* imu;
-    error* err = imu_init(&imu);
+    error* err = imu_init(&imu, i2c_fd);
     if(err != NULL) {
-        printf("ERR: %s\n", err);
-        exit(1);
+        close(i2c_fd);
+        return err;
     }
 
     est_euler_acct* est_euler_acc;
     err = est_euler_acc_init(&est_euler_acc, imu);
     if(err != NULL) {
-        printf("ERR: %s\n", err);
-        exit(1);
+        return err;
     }
 
     est_euler_gyrot* est_euler_gyro;
     err = est_euler_gyro_init(&est_euler_gyro, imu);
     if(err != NULL) {
-        printf("ERR: %s\n", err);
-        exit(1);
+        return err;
     }
 
     est_euler_gyrounalignt* est_euler_gyro_unalign;
     err = est_euler_gyrounalign_init(&est_euler_gyro_unalign, imu);
     if(err != NULL) {
-        printf("ERR: %s\n", err);
-        exit(1);
+        return err;
     }
 
     est_euler_complt* est_euler_compl;
     err = est_euler_compl_init(&est_euler_compl, imu);
     if(err != NULL) {
-        printf("ERR: %s\n", err);
-        exit(1);
+        return err;
     }
 
     est_dcm_complt* est_dcm_compl;
     err = est_dcm_compl_init(&est_dcm_compl, imu);
     if(err != NULL) {
-        printf("ERR: %s\n", err);
-        exit(1);
+        return err;
     }
 
     visualizert* visualizer;
     err = visualizer_init(&visualizer);
     if(err != NULL) {
-        printf("ERR: %s\n", err);
-        exit(1);
+        return err;
     }
 
     imu_output io;
@@ -118,5 +119,14 @@ int main() {
         }
     }
 
+    return NULL;
+}
+
+int main() {
+    error* err = run();
+    if(err != NULL) {
+        printf("ERR: %s\n", err);
+        exit(1);
+    }
     return 0;
 }

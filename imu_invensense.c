@@ -3,6 +3,8 @@
 #include <math.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
+#include <linux/i2c-dev.h>
 
 #include "error.h"
 #include "vector.h"
@@ -16,16 +18,18 @@
 #define GYRO_X 0x43
 
 typedef struct {
-    int fd;
+    int i2c_fd;
+    uint8_t address;
     double gyro_ssf;
     double acc_ssf;
 } _objt;
 
-error* imu_invensense_init(imu_invensense** pobj, int fd, invensense_acc_range acc_range,
-    invensense_gyro_range gyro_range) {
+error* imu_invensense_init(imu_invensense** pobj, int i2c_fd, uint8_t address,
+    invensense_acc_range acc_range, invensense_gyro_range gyro_range) {
     _objt* _obj = malloc(sizeof(_objt));
 
-    _obj->fd = fd;
+    _obj->i2c_fd = i2c_fd;
+    _obj->address = address;
 
     uint8_t acc_conf = 0;
 
@@ -75,19 +79,21 @@ error* imu_invensense_init(imu_invensense** pobj, int fd, invensense_acc_range a
         break;
     }
 
+    ioctl(_obj->i2c_fd, I2C_SLAVE, _obj->address);
+
     uint8_t cmd[2];
 
     cmd[0] = POWERMAN1;
     cmd[1] = POWERMAN1_DISABLE_TEMP;
-    write(_obj->fd, cmd, 2);
+    write(_obj->i2c_fd, cmd, 2);
 
     cmd[0] = ACC_CONF;
     cmd[1] = acc_conf;
-    write(_obj->fd, cmd, 2);
+    write(_obj->i2c_fd, cmd, 2);
 
     cmd[0] = GYRO_CONF;
     cmd[1] = gyro_conf;
-    write(_obj->fd, cmd, 2);
+    write(_obj->i2c_fd, cmd, 2);
 
     *pobj = _obj;
     return NULL;
@@ -100,20 +106,22 @@ static inline int16_t make_int16(uint8_t high, uint8_t low) {
 void imu_invensense_read(void* obj, imu_output* r) {
     _objt* _obj = (_objt*)obj;
 
+    ioctl(_obj->i2c_fd, I2C_SLAVE, _obj->address);
+
     uint8_t cmd;
     uint8_t out[6];
 
     cmd = ACC_X;
-    write(_obj->fd, &cmd, 1);
-    read(_obj->fd, out, 6);
+    write(_obj->i2c_fd, &cmd, 1);
+    read(_obj->i2c_fd, out, 6);
 
     r->acc.x = - (double)make_int16(out[0], out[1]) / _obj->acc_ssf;
     r->acc.y = (double)make_int16(out[2], out[3]) / _obj->acc_ssf;
     r->acc.z = (double)make_int16(out[4], out[5]) / _obj->acc_ssf;
 
     cmd = GYRO_X;
-    write(_obj->fd, &cmd, 1);
-    read(_obj->fd, out, 6);
+    write(_obj->i2c_fd, &cmd, 1);
+    read(_obj->i2c_fd, out, 6);
 
     r->gyro.x = (double)make_int16(out[0], out[1]) / _obj->gyro_ssf;
     r->gyro.y = - (double)make_int16(out[2], out[3]) / _obj->gyro_ssf;
