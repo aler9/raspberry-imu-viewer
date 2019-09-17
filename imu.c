@@ -33,31 +33,31 @@ static int find_sensor() {
         switch(who_am_i) {
         case 0x68:
             printf("found MPU6000/MPU6050 with address 0x%.2x\n", address);
-            _obj.sensor = imu_invensense_init(fd);
+            _obj.sensor = imu_invensense_init(fd, INVENSENSE_ACC_2G, INVENSENSE_GYRO_250);
             _obj.sensor_read = imu_invensense_read;
             return 1;
 
         case 0x70:
             printf("found MPU6500 with address 0x%.2x\n", address);
-            _obj.sensor = imu_invensense_init(fd);
+            _obj.sensor = imu_invensense_init(fd, INVENSENSE_ACC_2G, INVENSENSE_GYRO_250);
             _obj.sensor_read = imu_invensense_read;
             return 1;
 
         case 0x11:
             printf("found ICM20600 with address 0x%.2x\n", address);
-            _obj.sensor = imu_invensense_init(fd);
+            _obj.sensor = imu_invensense_init(fd, INVENSENSE_ACC_2G, INVENSENSE_GYRO_250);
             _obj.sensor_read = imu_invensense_read;
             return 1;
 
         case 0xAC:
             printf("found ICM20601 with address 0x%.2x\n", address);
-            _obj.sensor = imu_invensense_init(fd);
+            _obj.sensor = imu_invensense_init(fd, INVENSENSE_ACC_2G, INVENSENSE_GYRO_250);
             _obj.sensor_read = imu_invensense_read;
             return 1;
 
         case 0x12:
             printf("found ICM20602 with address 0x%.2x\n", address);
-            _obj.sensor = imu_invensense_init(fd);
+            _obj.sensor = imu_invensense_init(fd, INVENSENSE_ACC_2G, INVENSENSE_GYRO_250);
             _obj.sensor_read = imu_invensense_read;
             return 1;
         }
