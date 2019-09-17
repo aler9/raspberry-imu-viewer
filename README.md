@@ -13,7 +13,7 @@ This tool allows to view in 3D the output of various orientation estimation algo
 
 This tool is intended to:
 * provide a zero-dependencies, ready-to-use tool to test IMUs
-* provide a starting point for anyone wishing to explore the field of orientation estimation
+* provide a starting point to anyone wishing to explore the field of orientation estimation
 
 
 ## Build & launch
