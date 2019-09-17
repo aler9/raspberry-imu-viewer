@@ -1,7 +1,7 @@
 
-all: build_standard
+all: build_direct
 
-build_standard:
+build_direct:
 	@$(MAKE) -f Makefile.src
 
 build_cross:
@@ -13,7 +13,7 @@ BIN = raspberry-imu-viewer
 
 deploy: build_cross
 	ssh $(TARGET) "killall $(BIN) || exit 0"
-	docker run --rm temp cat /src/$(BIN) \
+	docker run --rm temp cat /s/$(BIN) \
 	| ssh $(TARGET) "tee ./$(BIN) >/dev/null"
 	ssh $(TARGET) "chmod +x ./$(BIN)"
 	ssh $(TARGET) "./$(BIN)"

@@ -4,6 +4,7 @@ BIN = raspberry-imu-viewer
 OBJECTS = $(patsubst %.c,%.o,$(wildcard *.c))
 
 CFLAGS += -Wall \
+	-Werror \
 	-O3 \
 	-I/opt/vc/include
 

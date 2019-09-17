@@ -1,8 +1,8 @@
 
 #include <stdlib.h>
-#include <linux/i2c-dev.h>
 #include <math.h>
 #include <stdint.h>
+#include <unistd.h>
 
 #include "vector.h"
 #include "imu.h"
@@ -12,12 +12,8 @@
 #define POWERMAN1_DISABLE_TEMP (1 << 3)
 #define ACC_CONF 0x1C
 #define ACC_X 0x3B
-#define ACC_Y 0x3D
-#define ACC_Z 0x3F
 #define GYRO_CONF 0x1B
 #define GYRO_X 0x43
-#define GYRO_Y 0x45
-#define GYRO_Z 0x47
 
 typedef struct {
     int fd;
@@ -30,7 +26,7 @@ void* imu_invensense_init(int fd, invensense_acc_range acc_range,
     _objt* _obj = malloc(sizeof(_objt));
     _obj->fd = fd;
 
-    uint8_t acc_conf;
+    uint8_t acc_conf = 0;
 
     switch(acc_range) {
     case INVENSENSE_ACC_2G:
@@ -54,7 +50,7 @@ void* imu_invensense_init(int fd, invensense_acc_range acc_range,
         break;
     }
 
-    uint8_t gyro_conf;
+    uint8_t gyro_conf = 0;
 
     switch(gyro_range) {
     case INVENSENSE_GYRO_250:
@@ -78,24 +74,45 @@ void* imu_invensense_init(int fd, invensense_acc_range acc_range,
         break;
     }
 
-    i2c_smbus_write_byte_data(_obj->fd, POWERMAN1, POWERMAN1_DISABLE_TEMP);
-    i2c_smbus_write_byte_data(_obj->fd, ACC_CONF, acc_conf);
-    i2c_smbus_write_byte_data(_obj->fd, GYRO_CONF, gyro_conf);
+    uint8_t cmd[2];
+
+    cmd[0] = POWERMAN1;
+    cmd[1] = POWERMAN1_DISABLE_TEMP;
+    write(_obj->fd, cmd, 2);
+
+    cmd[0] = ACC_CONF;
+    cmd[1] = acc_conf;
+    write(_obj->fd, cmd, 2);
+
+    cmd[0] = GYRO_CONF;
+    cmd[1] = gyro_conf;
+    write(_obj->fd, cmd, 2);
 
     return _obj;
 }
 
-static int16_t read_int16(_objt* _obj, int address) {
-    return i2c_smbus_read_byte_data(_obj->fd, address) << 8 |
-        i2c_smbus_read_byte_data(_obj->fd, address + 1);
+static inline int16_t make_int16(uint8_t high, uint8_t low) {
+    return high << 8 | low;
 }
 
 void imu_invensense_read(void* obj, imu_output* r) {
     _objt* _obj = (_objt*)obj;
-    r->acc.x = - (double)read_int16(_obj, ACC_X) / _obj->acc_ssf;
-    r->acc.y = (double)read_int16(_obj, ACC_Y) / _obj->acc_ssf;
-    r->acc.z = (double)read_int16(_obj, ACC_Z) / _obj->acc_ssf;
-    r->gyro.x = (double)read_int16(_obj, GYRO_X) / _obj->gyro_ssf;
-    r->gyro.y = - (double)read_int16(_obj, GYRO_Y) / _obj->gyro_ssf;
-    r->gyro.z = (double)read_int16(_obj, GYRO_Z) / _obj->gyro_ssf;
+    uint8_t cmd;
+    uint8_t out[6];
+
+    cmd = ACC_X;
+    write(_obj->fd, &cmd, 1);
+    read(_obj->fd, out, 6);
+
+    r->acc.x = - (double)make_int16(out[0], out[1]) / _obj->acc_ssf;
+    r->acc.y = (double)make_int16(out[2], out[3]) / _obj->acc_ssf;
+    r->acc.z = (double)make_int16(out[4], out[5]) / _obj->acc_ssf;
+
+    cmd = GYRO_X;
+    write(_obj->fd, &cmd, 1);
+    read(_obj->fd, out, 6);
+
+    r->gyro.x = (double)make_int16(out[0], out[1]) / _obj->gyro_ssf;
+    r->gyro.y = - (double)make_int16(out[2], out[3]) / _obj->gyro_ssf;
+    r->gyro.z = (double)make_int16(out[4], out[5]) / _obj->gyro_ssf;
 }

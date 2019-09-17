@@ -7,8 +7,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libi2c-dev \
     libraspberrypi-dev
 
-WORKDIR /src
+WORKDIR /s
 
 COPY *.h *.c Makefile Makefile.src ./
 
-RUN make build_standard
+RUN make build_direct
