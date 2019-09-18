@@ -21,8 +21,15 @@ typedef struct {
 error* est_dcm_compl_init(est_dcm_complt** pobj, imut* imu) {
     _objt* _obj = malloc(sizeof(_objt));
 
-    gyro_bias_init(&_obj->gyro_bias, imu);
-    align_dcm_init(&_obj->align, imu);
+    error* err = gyro_bias_init(&_obj->gyro_bias, imu);
+    if(err != NULL) {
+        return err;
+    }
+
+    err = align_dcm_init(&_obj->align, imu);
+    if(err != NULL) {
+        return err;
+    }
 
     // initial K points downwards
     _obj->prev_K.x = 0;

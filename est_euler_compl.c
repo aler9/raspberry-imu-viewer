@@ -22,8 +22,16 @@ typedef struct {
 error* est_euler_compl_init(est_euler_complt** pobj, imut* imu) {
     _objt* _obj = malloc(sizeof(_objt));
 
-    gyro_bias_init(&_obj->gyro_bias, imu);
-    align_dcm_init(&_obj->align, imu);
+    error* err = gyro_bias_init(&_obj->gyro_bias, imu);
+    if(err != NULL) {
+        return err;
+    }
+
+    err = align_dcm_init(&_obj->align, imu);
+    if(err != NULL) {
+        return err;
+    }
+
     _obj->prev_roll = 0;
     _obj->prev_pitch = 0;
 

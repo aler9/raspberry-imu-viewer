@@ -83,7 +83,10 @@ static error* run() {
     estimator_output eo;
 
     while(1) {
-        imu_read(imu, &io);
+        error* err = imu_read(imu, &io);
+        if(err != NULL) {
+            return err;
+        }
         read_count++;
 
         uint32_t now = clock_usec();

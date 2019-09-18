@@ -1,4 +1,6 @@
 
+#include <stdlib.h>
+
 #include "error.h"
 #include "vector.h"
 #include "imu.h"
@@ -6,16 +8,21 @@
 
 #define SAMPLE_COUNT 500
 
-void align_dcm_init(matrix* align, imut* imu) {
+error* align_dcm_init(matrix* align, imut* imu) {
     // sample accelerometers and get K
     vector vK;
     imu_output io;
     for(int i = 0; i < SAMPLE_COUNT; i++) {
-        imu_read(imu, &io);
+        error* err = imu_read(imu, &io);
+        if(err != NULL) {
+            return err;
+        }
+
         vK.x += io.acc.x;
         vK.y += io.acc.y;
         vK.z += io.acc.z;
     }
+
     vK.x /= SAMPLE_COUNT;
     vK.y /= SAMPLE_COUNT;
     vK.z /= SAMPLE_COUNT;
@@ -43,4 +50,6 @@ void align_dcm_init(matrix* align, imut* imu) {
     vector_cross(&vK, &vI, &vJ);
 
     matrix_fill_rows(&vI, &vJ, &vK, align);
+
+    return NULL;
 }

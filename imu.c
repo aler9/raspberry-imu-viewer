@@ -12,7 +12,7 @@
 #include "imu_invensense.h"
 #include "imu.h"
 
-typedef void (*sensor_read_func)(void*, imu_output*);
+typedef error* (*sensor_read_func)(void*, imu_output*);
 
 typedef struct {
     void* sensor;
@@ -87,7 +87,7 @@ error* imu_init(imut** pobj, int i2c_fd) {
     return NULL;
 }
 
-void imu_read(imut* obj, imu_output* r) {
+error* imu_read(imut* obj, imu_output* r) {
     _objt* _obj = (_objt*)obj;
-    _obj->sensor_read(_obj->sensor, r);
+    return _obj->sensor_read(_obj->sensor, r);
 }

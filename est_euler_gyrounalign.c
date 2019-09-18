@@ -19,7 +19,11 @@ typedef struct {
 error* est_euler_gyrounalign_init(est_euler_gyrounalignt** pobj, imut* imu) {
     _objt* _obj = malloc(sizeof(_objt));
 
-    gyro_bias_init(&_obj->gyro_bias, imu);
+    error* err = gyro_bias_init(&_obj->gyro_bias, imu);
+    if(err != NULL) {
+        return err;
+    }
+
     _obj->prev_roll = 0;
     _obj->prev_pitch = 0;
     _obj->prev_yaw = 0;

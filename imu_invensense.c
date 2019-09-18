@@ -79,21 +79,33 @@ error* imu_invensense_init(imu_invensense** pobj, int i2c_fd, uint8_t address,
         break;
     }
 
-    ioctl(_obj->i2c_fd, I2C_SLAVE, _obj->address);
+    int res = ioctl(_obj->i2c_fd, I2C_SLAVE, _obj->address);
+    if(res != 0) {
+        return "ioctl() failed";
+    }
 
     uint8_t cmd[2];
 
     cmd[0] = POWERMAN1;
     cmd[1] = POWERMAN1_DISABLE_TEMP;
-    write(_obj->i2c_fd, cmd, 2);
+    res = write(_obj->i2c_fd, cmd, 2);
+    if(res != 2) {
+        return "write() failed";
+    }
 
     cmd[0] = ACC_CONF;
     cmd[1] = acc_conf;
-    write(_obj->i2c_fd, cmd, 2);
+    res = write(_obj->i2c_fd, cmd, 2);
+    if(res != 2) {
+        return "write() failed";
+    }
 
     cmd[0] = GYRO_CONF;
     cmd[1] = gyro_conf;
-    write(_obj->i2c_fd, cmd, 2);
+    res = write(_obj->i2c_fd, cmd, 2);
+    if(res != 2) {
+        return "write() failed";
+    }
 
     *pobj = _obj;
     return NULL;
@@ -103,27 +115,45 @@ static inline int16_t make_int16(uint8_t high, uint8_t low) {
     return high << 8 | low;
 }
 
-void imu_invensense_read(void* obj, imu_output* r) {
+error* imu_invensense_read(void* obj, imu_output* r) {
     _objt* _obj = (_objt*)obj;
 
-    ioctl(_obj->i2c_fd, I2C_SLAVE, _obj->address);
+    int res = ioctl(_obj->i2c_fd, I2C_SLAVE, _obj->address);
+    if(res != 0) {
+        return "ioctl() failed";
+    }
 
-    uint8_t cmd;
     uint8_t out[6];
 
-    cmd = ACC_X;
-    write(_obj->i2c_fd, &cmd, 1);
-    read(_obj->i2c_fd, out, 6);
+    uint8_t cmd = ACC_X;
+    res = write(_obj->i2c_fd, &cmd, 1);
+    if(res != 1) {
+        return "write() failed";
+    }
+
+    res = read(_obj->i2c_fd, out, 6);
+    if(res != 6) {
+        return "read() failed";
+    }
 
     r->acc.x = - (double)make_int16(out[0], out[1]) / _obj->acc_ssf;
     r->acc.y = (double)make_int16(out[2], out[3]) / _obj->acc_ssf;
     r->acc.z = (double)make_int16(out[4], out[5]) / _obj->acc_ssf;
 
     cmd = GYRO_X;
-    write(_obj->i2c_fd, &cmd, 1);
-    read(_obj->i2c_fd, out, 6);
+    res = write(_obj->i2c_fd, &cmd, 1);
+    if(res != 1) {
+        return "write() failed";
+    }
+
+    res = read(_obj->i2c_fd, out, 6);
+    if(res != 6) {
+        return "read() failed";
+    }
 
     r->gyro.x = (double)make_int16(out[0], out[1]) / _obj->gyro_ssf;
     r->gyro.y = - (double)make_int16(out[2], out[3]) / _obj->gyro_ssf;
     r->gyro.z = (double)make_int16(out[4], out[5]) / _obj->gyro_ssf;
+
+    return NULL;
 }
