@@ -1,0 +1,4 @@
+[submodule "sensor-imu"]
+	path = sensor-imu
+	url = https://github.com/gswly/sensor-imu
+	branch = master

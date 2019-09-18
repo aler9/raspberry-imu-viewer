@@ -2,6 +2,7 @@
 all: build_direct
 
 build_direct:
+	@[ -f "sensor-imu/imu_auto.c" ] || git submodule update --init
 	@$(MAKE) -f Makefile.src
 
 define DOCKERFILE
@@ -14,11 +15,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libraspberrypi-dev
 WORKDIR /s
 COPY *.h *.c Makefile Makefile.src ./
+COPY sensor-imu ./sensor-imu
 RUN make build_direct
 endef
 export DOCKERFILE
 
 build_cross:
+	@[ -f "sensor-imu/imu_auto.c" ] || git submodule update --init
 	docker run --rm --privileged multiarch/qemu-user-static:register --reset --credential yes >/dev/null
 	echo "$$DOCKERFILE" | docker build . -f - -t temp
 

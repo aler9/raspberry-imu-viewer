@@ -3,8 +3,8 @@
 
 #include "error.h"
 #include "vector.h"
-#include "imu.h"
-#include "imu_auto.h"
+#include "sensor-imu/imu.h"
+#include "sensor-imu/imu_auto.h"
 #include "align_dcm.h"
 
 #define SAMPLE_COUNT 500

@@ -4,8 +4,8 @@
 
 #include "error.h"
 #include "vector.h"
-#include "imu.h"
-#include "imu_auto.h"
+#include "sensor-imu/imu.h"
+#include "sensor-imu/imu_auto.h"
 #include "align_dcm.h"
 #include "gyro_bias.h"
 #include "est.h"
