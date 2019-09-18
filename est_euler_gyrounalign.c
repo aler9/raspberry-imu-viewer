@@ -33,12 +33,12 @@ error* est_euler_gyrounalign_init(est_euler_gyrounalignt** pobj, imut* imu) {
     return NULL;
 }
 
-void est_euler_gyrounalign_do(est_euler_gyrounalignt* obj, const imu_output* io,
+void est_euler_gyrounalign_do(est_euler_gyrounalignt* obj, const vector* gyro_out,
     double dt, estimator_output* eo) {
     _objt* _obj = (_objt*)obj;
 
     vector tuned_gyro;
-    vector_diff(&io->gyro, &_obj->gyro_bias, &tuned_gyro);
+    vector_diff(gyro_out, &_obj->gyro_bias, &tuned_gyro);
 
     _obj->prev_roll = _obj->prev_roll + tuned_gyro.x*dt;
     _obj->prev_pitch = _obj->prev_pitch + tuned_gyro.y*dt;

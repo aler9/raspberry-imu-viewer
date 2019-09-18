@@ -41,12 +41,12 @@ error* est_euler_gyro_init(est_euler_gyrot** pobj, imut* imu) {
     return NULL;
 }
 
-void est_euler_gyro_do(est_euler_gyrot* obj, const imu_output* io, double dt,
+void est_euler_gyro_do(est_euler_gyrot* obj, const vector* gyro_out, double dt,
     estimator_output* eo) {
     _objt* _obj = (_objt*)obj;
 
     vector tuned_gyro;
-    vector_diff(&io->gyro, &_obj->gyro_bias, &tuned_gyro);
+    vector_diff(gyro_out, &_obj->gyro_bias, &tuned_gyro);
 
     vector aligned_gyro;
     matrix_multiply(&_obj->align, &tuned_gyro, &aligned_gyro);

@@ -33,11 +33,11 @@ error* est_euler_acc_init(est_euler_acct** pobj, imut* imu) {
     return NULL;
 }
 
-void est_euler_acc_do(est_euler_acct* obj, const imu_output* io, double dt, estimator_output* eo) {
+void est_euler_acc_do(est_euler_acct* obj, const vector* acc_out, double dt, estimator_output* eo) {
     _objt* _obj = (_objt*)obj;
 
     vector aligned_acc;
-    matrix_multiply(&_obj->align, &io->acc, &aligned_acc);
+    matrix_multiply(&_obj->align, acc_out, &aligned_acc);
 
     double cur_roll = atan2(aligned_acc.y, aligned_acc.z);
     double cur_pitch = -atan2(aligned_acc.x, sqrt(aligned_acc.y*aligned_acc.y + aligned_acc.z*aligned_acc.z));

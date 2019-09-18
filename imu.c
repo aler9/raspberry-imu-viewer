@@ -7,9 +7,8 @@
 #include <unistd.h>
 
 #include "error.h"
-#include "vector.h"
-#include "imu_invensense.h"
 #include "imu.h"
+#include "imu_invensense.h"
 
 typedef error* (*sensor_read_func)(void*, imu_output*);
 
@@ -86,7 +85,7 @@ error* imu_init(imut** pobj, int i2c_fd) {
     return NULL;
 }
 
-error* imu_read(imut* obj, imu_output* r) {
+error* imu_read(imut* obj, imu_output* out) {
     _objt* _obj = (_objt*)obj;
-    return _obj->sensor_read(_obj->sensor, r);
+    return _obj->sensor_read(_obj->sensor, out);
 }

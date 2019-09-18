@@ -7,7 +7,7 @@
 #include <linux/i2c-dev.h>
 
 #include "error.h"
-#include "vector.h"
+#include "imu.h"
 #include "imu_invensense.h"
 
 #define POWERMAN1 0x6B
@@ -119,7 +119,7 @@ static inline int16_t make_int16(uint8_t* data) {
     return data[0] << 8 | data[1];
 }
 
-error* imu_invensense_read(void* obj, imu_output* r) {
+error* imu_invensense_read(void* obj, imu_output* out) {
     _objt* _obj = (_objt*)obj;
 
     int res = ioctl(_obj->i2c_fd, I2C_SLAVE, _obj->address);
@@ -127,7 +127,7 @@ error* imu_invensense_read(void* obj, imu_output* r) {
         return "ioctl() failed";
     }
 
-    uint8_t out[6];
+    uint8_t out_raw[6];
 
     uint8_t cmd = ACC_X;
     res = write(_obj->i2c_fd, &cmd, 1);
@@ -135,14 +135,14 @@ error* imu_invensense_read(void* obj, imu_output* r) {
         return "write() failed";
     }
 
-    res = read(_obj->i2c_fd, out, 6);
+    res = read(_obj->i2c_fd, out_raw, 6);
     if(res != 6) {
         return "read() failed";
     }
 
-    r->acc.x = - (double)make_int16(&out[0]) / _obj->acc_ssf;
-    r->acc.y = (double)make_int16(&out[2]) / _obj->acc_ssf;
-    r->acc.z = (double)make_int16(&out[4]) / _obj->acc_ssf;
+    out->acc.x = - (double)make_int16(&out_raw[0]) / _obj->acc_ssf;
+    out->acc.y = (double)make_int16(&out_raw[2]) / _obj->acc_ssf;
+    out->acc.z = (double)make_int16(&out_raw[4]) / _obj->acc_ssf;
 
     cmd = GYRO_X;
     res = write(_obj->i2c_fd, &cmd, 1);
@@ -150,14 +150,14 @@ error* imu_invensense_read(void* obj, imu_output* r) {
         return "write() failed";
     }
 
-    res = read(_obj->i2c_fd, out, 6);
+    res = read(_obj->i2c_fd, out_raw, 6);
     if(res != 6) {
         return "read() failed";
     }
 
-    r->gyro.x = (double)make_int16(&out[0]) / _obj->gyro_ssf;
-    r->gyro.y = - (double)make_int16(&out[2]) / _obj->gyro_ssf;
-    r->gyro.z = (double)make_int16(&out[4]) / _obj->gyro_ssf;
+    out->gyro.x = (double)make_int16(&out_raw[0]) / _obj->gyro_ssf;
+    out->gyro.y = - (double)make_int16(&out_raw[2]) / _obj->gyro_ssf;
+    out->gyro.z = (double)make_int16(&out_raw[4]) / _obj->gyro_ssf;
 
     return NULL;
 }
