@@ -111,8 +111,8 @@ error* imu_invensense_init(imu_invensense** pobj, int i2c_fd, uint8_t address,
     return NULL;
 }
 
-static inline int16_t make_int16(uint8_t high, uint8_t low) {
-    return high << 8 | low;
+static inline int16_t make_int16(uint8_t* data) {
+    return data[0] << 8 | data[1];
 }
 
 error* imu_invensense_read(void* obj, imu_output* r) {
@@ -136,9 +136,9 @@ error* imu_invensense_read(void* obj, imu_output* r) {
         return "read() failed";
     }
 
-    r->acc.x = - (double)make_int16(out[0], out[1]) / _obj->acc_ssf;
-    r->acc.y = (double)make_int16(out[2], out[3]) / _obj->acc_ssf;
-    r->acc.z = (double)make_int16(out[4], out[5]) / _obj->acc_ssf;
+    r->acc.x = - (double)make_int16(&out[0]) / _obj->acc_ssf;
+    r->acc.y = (double)make_int16(&out[2]) / _obj->acc_ssf;
+    r->acc.z = (double)make_int16(&out[4]) / _obj->acc_ssf;
 
     cmd = GYRO_X;
     res = write(_obj->i2c_fd, &cmd, 1);
@@ -151,9 +151,9 @@ error* imu_invensense_read(void* obj, imu_output* r) {
         return "read() failed";
     }
 
-    r->gyro.x = (double)make_int16(out[0], out[1]) / _obj->gyro_ssf;
-    r->gyro.y = - (double)make_int16(out[2], out[3]) / _obj->gyro_ssf;
-    r->gyro.z = (double)make_int16(out[4], out[5]) / _obj->gyro_ssf;
+    r->gyro.x = (double)make_int16(&out[0]) / _obj->gyro_ssf;
+    r->gyro.y = - (double)make_int16(&out[2]) / _obj->gyro_ssf;
+    r->gyro.z = (double)make_int16(&out[4]) / _obj->gyro_ssf;
 
     return NULL;
 }
