@@ -84,7 +84,7 @@ static error* run() {
     estimator_output eo;
 
     while(1) {
-        error* err = imu_auto_read(imu, &io);
+        err = imu_auto_read(imu, &io);
         if(err != NULL) {
             return err;
         }
