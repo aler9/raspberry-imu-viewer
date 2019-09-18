@@ -5,6 +5,7 @@
 #include "error.h"
 #include "vector.h"
 #include "imu.h"
+#include "imu_auto.h"
 #include "gyro_bias.h"
 #include "est.h"
 #include "est_euler_gyrounalign.h"
@@ -16,7 +17,7 @@ typedef struct {
     double prev_yaw;
 } _objt;
 
-error* est_euler_gyrounalign_init(est_euler_gyrounalignt** pobj, imut* imu) {
+error* est_euler_gyrounalign_init(est_euler_gyrounalignt** pobj, imu_autot* imu) {
     _objt* _obj = malloc(sizeof(_objt));
 
     error* err = gyro_bias_init(&_obj->gyro_bias, imu);

@@ -5,6 +5,7 @@
 #include "error.h"
 #include "vector.h"
 #include "imu.h"
+#include "imu_auto.h"
 #include "align_dcm.h"
 #include "gyro_bias.h"
 #include "est.h"
@@ -18,7 +19,7 @@ typedef struct {
     vector prev_K;
 } _objt;
 
-error* est_dcm_compl_init(est_dcm_complt** pobj, imut* imu) {
+error* est_dcm_compl_init(est_dcm_complt** pobj, imu_autot* imu) {
     _objt* _obj = malloc(sizeof(_objt));
 
     error* err = gyro_bias_init(&_obj->gyro_bias, imu);

@@ -10,6 +10,7 @@
 #include "error.h"
 #include "vector.h"
 #include "imu.h"
+#include "imu_auto.h"
 #include "est.h"
 #include "viewer.h"
 #include "est_euler_acc.h"
@@ -33,8 +34,8 @@ static error* run() {
         return "unable to open device /dev/i2c-1";
     }
 
-    imut* imu;
-    error* err = imu_init(&imu, i2c_fd);
+    imu_autot* imu;
+    error* err = imu_auto_init(&imu, i2c_fd);
     if(err != NULL) {
         close(i2c_fd);
         return err;
@@ -83,7 +84,7 @@ static error* run() {
     estimator_output eo;
 
     while(1) {
-        error* err = imu_read(imu, &io);
+        error* err = imu_auto_read(imu, &io);
         if(err != NULL) {
             return err;
         }

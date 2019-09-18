@@ -5,6 +5,7 @@
 #include "error.h"
 #include "vector.h"
 #include "imu.h"
+#include "imu_auto.h"
 #include "align_dcm.h"
 #include "est.h"
 #include "est_euler_acc.h"
@@ -17,7 +18,7 @@ typedef struct {
     double prev_pitch;
 } _objt;
 
-error* est_euler_acc_init(est_euler_acct** pobj, imut* imu) {
+error* est_euler_acc_init(est_euler_acct** pobj, imu_autot* imu) {
     _objt* _obj = malloc(sizeof(_objt));
 
     error* err = align_dcm_init(&_obj->align, imu);

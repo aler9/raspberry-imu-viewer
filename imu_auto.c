@@ -9,6 +9,7 @@
 #include "error.h"
 #include "imu.h"
 #include "imu_invensense.h"
+#include "imu_auto.h"
 
 typedef error* (*sensor_read_func)(void*, imu_output*);
 
@@ -72,7 +73,7 @@ static error* find_sensor(_objt* _obj, int i2c_fd) {
     return "no IMU sensor found";
 }
 
-error* imu_init(imut** pobj, int i2c_fd) {
+error* imu_auto_init(imu_autot** pobj, int i2c_fd) {
     _objt* _obj = malloc(sizeof(_objt));
 
     error* err = find_sensor(_obj, i2c_fd);
@@ -85,7 +86,7 @@ error* imu_init(imut** pobj, int i2c_fd) {
     return NULL;
 }
 
-error* imu_read(imut* obj, imu_output* out) {
+error* imu_auto_read(imu_autot* obj, imu_output* out) {
     _objt* _obj = (_objt*)obj;
     return _obj->sensor_read(_obj->sensor, out);
 }
