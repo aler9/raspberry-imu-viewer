@@ -39,11 +39,7 @@ This tool is intended to:
 
 3. install dependencies
    ```
-   sudo apt install -y make \
-   gcc \
-   libc6-dev \
-   libi2c-dev \
-   libraspberrypi-dev
+   sudo apt install -y make gcc libc6-dev libi2c-dev libraspberrypi-dev
    ```
 
 4. build
