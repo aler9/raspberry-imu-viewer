@@ -4,9 +4,23 @@ all: build_direct
 build_direct:
 	@$(MAKE) -f Makefile.src
 
+define DOCKERFILE
+FROM balenalib/raspberry-pi-debian:stretch
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    make \
+    gcc \
+    libc6-dev \
+    libi2c-dev \
+    libraspberrypi-dev
+WORKDIR /s
+COPY *.h *.c Makefile Makefile.src ./
+RUN make build_direct
+endef
+export DOCKERFILE
+
 build_cross:
 	docker run --rm --privileged multiarch/qemu-user-static:register --reset --credential yes >/dev/null
-	docker build . -t temp
+	echo "$$DOCKERFILE" | docker build . -f - -t temp
 
 TARGET ?= pi@192.168.2.170
 BIN = raspberry-imu-viewer

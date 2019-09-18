@@ -1,11 +1,10 @@
 
-#include <string.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <sys/ioctl.h>
 #include <linux/i2c-dev.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <stdlib.h>
 
 #include "error.h"
 #include "vector.h"

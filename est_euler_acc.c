@@ -1,5 +1,5 @@
 
-#include <string.h>
+#include <stdlib.h>
 #include <math.h>
 
 #include "error.h"
@@ -20,7 +20,12 @@ typedef struct {
 error* est_euler_acc_init(est_euler_acct** pobj, imut* imu) {
     _objt* _obj = malloc(sizeof(_objt));
 
-    align_dcm_init(&_obj->align, imu);
+    error* err = align_dcm_init(&_obj->align, imu);
+    if(err != NULL) {
+        free(_obj);
+        return err;
+    }
+
     _obj->prev_roll = 0;
     _obj->prev_pitch = 0;
 

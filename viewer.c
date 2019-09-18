@@ -1,6 +1,5 @@
 
 #include <stdlib.h>
-#include <string.h>
 #include <math.h>
 #include <bcm_host.h>
 #include <GLES/gl.h>
@@ -14,7 +13,7 @@
 #define ROWS 2
 #define COLS 3
 
-static const GLbyte vertex_ptr[6 * 4 * 3] = {
+static const GLbyte vertex_ptr[] = {
     // face 1
    -5, -2,  10,
    5,  -2,  10,
@@ -47,7 +46,7 @@ static const GLbyte vertex_ptr[6 * 4 * 3] = {
    5, -2, -10,
 };
 
-static const GLfloat color_ptr[6 * 3] = {
+static const GLfloat color_ptr[] = {
     1.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f,
     0.0f, 0.0f, 1.0f,
@@ -58,7 +57,6 @@ static const GLfloat color_ptr[6 * 3] = {
 
 typedef struct {
     EGLDisplay display;
-    EGLContext context;
     EGLSurface surface;
     EGL_DISPMANX_WINDOW_T native_window;
     uint32_t screen_width;
@@ -99,8 +97,8 @@ error* visualizer_init(visualizert** pobj) {
         return "eglChooseConfig() failed";
     }
 
-    _obj->context = eglCreateContext(_obj->display, config, EGL_NO_CONTEXT, NULL);
-    if(_obj->context == EGL_NO_CONTEXT) {
+    EGLContext context = eglCreateContext(_obj->display, config, EGL_NO_CONTEXT, NULL);
+    if(context == EGL_NO_CONTEXT) {
         free(_obj);
         return "eglCreateContext() failed";
     }
@@ -111,17 +109,19 @@ error* visualizer_init(visualizert** pobj) {
         return "graphics_get_display_size() failed";
     }
 
-    VC_RECT_T dst_rect;
-    dst_rect.x = 0;
-    dst_rect.y = 0;
-    dst_rect.width = _obj->screen_width;
-    dst_rect.height = _obj->screen_height;
+    VC_RECT_T dst_rect = {
+        .x = 0,
+        .y = 0,
+        .width = _obj->screen_width,
+        .height = _obj->screen_height,
+    };
 
-    VC_RECT_T src_rect;
-    src_rect.x = 0;
-    src_rect.y = 0;
-    src_rect.width = _obj->screen_width << 16;
-    src_rect.height = _obj->screen_height << 16;
+    VC_RECT_T src_rect = {
+        .x = 0,
+        .y = 0,
+        .width = _obj->screen_width << 16,
+        .height = _obj->screen_height << 16,
+    };
 
     DISPMANX_DISPLAY_HANDLE_T dmx_display = vc_dispmanx_display_open(0);
     DISPMANX_UPDATE_HANDLE_T dmx_update = vc_dispmanx_update_start(0);
@@ -139,7 +139,7 @@ error* visualizer_init(visualizert** pobj) {
         return "eglCreateWindowSurface() failed";
     }
 
-    glres = eglMakeCurrent(_obj->display, _obj->surface, _obj->surface, _obj->context);
+    glres = eglMakeCurrent(_obj->display, _obj->surface, _obj->surface, context);
     if(glres == EGL_FALSE) {
         free(_obj);
         return "eglMakeCurrent() failed";

@@ -81,6 +81,7 @@ error* imu_invensense_init(imu_invensense** pobj, int i2c_fd, uint8_t address,
 
     int res = ioctl(_obj->i2c_fd, I2C_SLAVE, _obj->address);
     if(res != 0) {
+        free(_obj);
         return "ioctl() failed";
     }
 
@@ -90,6 +91,7 @@ error* imu_invensense_init(imu_invensense** pobj, int i2c_fd, uint8_t address,
     cmd[1] = POWERMAN1_DISABLE_TEMP;
     res = write(_obj->i2c_fd, cmd, 2);
     if(res != 2) {
+        free(_obj);
         return "write() failed";
     }
 
@@ -97,6 +99,7 @@ error* imu_invensense_init(imu_invensense** pobj, int i2c_fd, uint8_t address,
     cmd[1] = acc_conf;
     res = write(_obj->i2c_fd, cmd, 2);
     if(res != 2) {
+        free(_obj);
         return "write() failed";
     }
 
@@ -104,6 +107,7 @@ error* imu_invensense_init(imu_invensense** pobj, int i2c_fd, uint8_t address,
     cmd[1] = gyro_conf;
     res = write(_obj->i2c_fd, cmd, 2);
     if(res != 2) {
+        free(_obj);
         return "write() failed";
     }
 

@@ -1,5 +1,5 @@
 
-#include <string.h>
+#include <stdlib.h>
 #include <math.h>
 
 #include "error.h"
@@ -24,11 +24,13 @@ error* est_euler_compl_init(est_euler_complt** pobj, imut* imu) {
 
     error* err = gyro_bias_init(&_obj->gyro_bias, imu);
     if(err != NULL) {
+        free(_obj);
         return err;
     }
 
     err = align_dcm_init(&_obj->align, imu);
     if(err != NULL) {
+        free(_obj);
         return err;
     }
 
