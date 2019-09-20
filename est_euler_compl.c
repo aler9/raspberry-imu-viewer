@@ -42,15 +42,15 @@ error* est_euler_compl_init(est_euler_complt** pobj, imu_autot* imu) {
     return NULL;
 }
 
-void est_euler_compl_do(est_euler_complt* obj, const vector* acc_out, const vector* gyro_out, double dt,
+void est_euler_compl_do(est_euler_complt* obj, const double* acc, const double* gyro, double dt,
     estimator_output* eo) {
     _objt* _obj = (_objt*)obj;
 
     vector aligned_acc;
-    matrix_multiply(&_obj->align, acc_out, &aligned_acc);
+    matrix_multiply(&_obj->align, (const vector*)acc, &aligned_acc);
 
     vector tuned_gyro;
-    vector_diff(gyro_out, &_obj->gyro_bias, &tuned_gyro);
+    vector_diff((const vector*)gyro, &_obj->gyro_bias, &tuned_gyro);
 
     vector aligned_gyro;
     matrix_multiply(&_obj->align, &tuned_gyro, &aligned_gyro);

@@ -8,7 +8,6 @@
 #include <fcntl.h>
 
 #include "error.h"
-#include "vector.h"
 #include "sensor-imu/imu.h"
 #include "sensor-imu/imu_auto.h"
 #include "est.h"
@@ -96,19 +95,19 @@ static error* run() {
 
         visualizer_draw_start(visualizer);
 
-        est_euler_acc_do(est_euler_acc, (vector*)&io.acc, dt, &eo);
+        est_euler_acc_do(est_euler_acc, io.acc_array, dt, &eo);
         visualizer_draw_estimate(visualizer, 0, &eo);
 
-        est_euler_gyro_do(est_euler_gyro, (vector*)&io.gyro, dt, &eo);
+        est_euler_gyro_do(est_euler_gyro, io.gyro_array, dt, &eo);
         visualizer_draw_estimate(visualizer, 1, &eo);
 
-        est_euler_gyrounalign_do(est_euler_gyro_unalign, (vector*)&io.gyro, dt, &eo);
+        est_euler_gyrounalign_do(est_euler_gyro_unalign, io.gyro_array, dt, &eo);
         visualizer_draw_estimate(visualizer, 2, &eo);
 
-        est_euler_compl_do(est_euler_compl, (vector*)&io.acc, (vector*)&io.gyro, dt, &eo);
+        est_euler_compl_do(est_euler_compl, io.acc_array, io.gyro_array, dt, &eo);
         visualizer_draw_estimate(visualizer, 3, &eo);
 
-        est_dcm_compl_do(est_dcm_compl, (vector*)&io.acc, (vector*)&io.gyro, dt, &eo);
+        est_dcm_compl_do(est_dcm_compl, io.acc_array, io.gyro_array, dt, &eo);
         visualizer_draw_estimate(visualizer, 4, &eo);
 
         visualizer_draw_end(visualizer);
