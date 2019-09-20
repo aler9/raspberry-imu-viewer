@@ -10,6 +10,9 @@
 #include "error.h"
 #include "sensor-imu/imu.h"
 #include "sensor-imu/imu_auto.h"
+#include "sensor-imu/orientation/vector.h"
+#include "sensor-imu/orientation/align_dcm.h"
+#include "sensor-imu/orientation/gyro_bias.h"
 #include "sensor-imu/orientation/est.h"
 #include "sensor-imu/orientation/est_euler_acc.h"
 #include "sensor-imu/orientation/est_euler_gyro.h"
@@ -40,32 +43,44 @@ static error* run() {
         return err;
     }
 
+    matrix align_dcm;
+    err = align_dcm_init(&align_dcm, imu);
+    if(err != NULL) {
+        return err;
+    }
+
+    vector gyro_bias;
+    err = gyro_bias_init(&gyro_bias, imu);
+    if(err != NULL) {
+        return err;
+    }
+
     est_euler_acct* est_euler_acc;
-    err = est_euler_acc_init(&est_euler_acc, imu);
+    err = est_euler_acc_init(&est_euler_acc, &align_dcm);
     if(err != NULL) {
         return err;
     }
 
     est_euler_gyrot* est_euler_gyro;
-    err = est_euler_gyro_init(&est_euler_gyro, imu);
+    err = est_euler_gyro_init(&est_euler_gyro, &align_dcm, &gyro_bias);
     if(err != NULL) {
         return err;
     }
 
     est_euler_gyrounalignt* est_euler_gyro_unalign;
-    err = est_euler_gyrounalign_init(&est_euler_gyro_unalign, imu);
+    err = est_euler_gyrounalign_init(&est_euler_gyro_unalign, &gyro_bias);
     if(err != NULL) {
         return err;
     }
 
     est_euler_complt* est_euler_compl;
-    err = est_euler_compl_init(&est_euler_compl, imu);
+    err = est_euler_compl_init(&est_euler_compl, &align_dcm, &gyro_bias);
     if(err != NULL) {
         return err;
     }
 
     est_dcm_complt* est_dcm_compl;
-    err = est_dcm_compl_init(&est_dcm_compl, imu);
+    err = est_dcm_compl_init(&est_dcm_compl, &align_dcm, &gyro_bias);
     if(err != NULL) {
         return err;
     }
