@@ -7,7 +7,7 @@
 #include <EGL/eglext.h>
 
 #include "error.h"
-#include "est.h"
+#include "sensor-imu/orientation/est.h"
 #include "viewer.h"
 
 #define ROWS 2

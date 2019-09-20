@@ -3,6 +3,7 @@ BIN = raspberry-imu-viewer
 
 OBJECTS = sensor-imu/imu_auto.o \
 	sensor-imu/imu_invensense.o \
+	$(patsubst %.c,%.o,$(wildcard sensor-imu/orientation/*.c)) \
 	$(patsubst %.c,%.o,$(wildcard *.c))
 
 CFLAGS += -Wall \

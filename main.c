@@ -10,13 +10,13 @@
 #include "error.h"
 #include "sensor-imu/imu.h"
 #include "sensor-imu/imu_auto.h"
-#include "est.h"
+#include "sensor-imu/orientation/est.h"
+#include "sensor-imu/orientation/est_euler_acc.h"
+#include "sensor-imu/orientation/est_euler_gyro.h"
+#include "sensor-imu/orientation/est_euler_gyrounalign.h"
+#include "sensor-imu/orientation/est_euler_compl.h"
+#include "sensor-imu/orientation/est_dcm_compl.h"
 #include "viewer.h"
-#include "est_euler_acc.h"
-#include "est_euler_gyro.h"
-#include "est_euler_gyrounalign.h"
-#include "est_euler_compl.h"
-#include "est_dcm_compl.h"
 
 static uint32_t clock_usec() {
     struct timespec ts;
