@@ -2,7 +2,7 @@
 all: build_direct
 
 build_direct:
-	@[ -f "sensor-imu/imu_auto.c" ] || git submodule update --init
+	[ -n "$$IN_DOCKER" ] || git submodule status | grep -vq '^-' || git submodule update --init --recursive
 	@$(MAKE) -f Makefile.src
 
 define DOCKERFILE
@@ -16,12 +16,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /s
 COPY *.h *.c Makefile Makefile.src ./
 COPY sensor-imu ./sensor-imu
+ENV IN_DOCKER 1
 RUN make build_direct
 endef
 export DOCKERFILE
 
 build_cross:
-	@[ -f "sensor-imu/imu_auto.c" ] || git submodule update --init
+	git submodule status | grep -vq '^-' || git submodule update --init --recursive
 	docker run --rm --privileged multiarch/qemu-user-static:register --reset --credential yes >/dev/null
 	echo "$$DOCKERFILE" | docker build . -f - -t temp
 
