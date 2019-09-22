@@ -110,7 +110,7 @@ static error* run() {
 
         visualizer_draw_start(visualizer);
 
-        est_euler_acc_do(est_euler_acc, io.acc_array, dt, &eo);
+        est_euler_acc_do(est_euler_acc, io.acc_array, &eo);
         visualizer_draw_estimate(visualizer, 0, &eo);
 
         est_euler_gyro_do(est_euler_gyro, io.gyro_array, dt, &eo);

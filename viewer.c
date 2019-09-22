@@ -168,7 +168,7 @@ error* visualizer_init(visualizert** pobj) {
     return NULL;
 }
 
-void visualizer_draw_start(visualizert* obj) {
+void visualizer_draw_start(__attribute__((unused)) visualizert* obj) {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
