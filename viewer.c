@@ -6,7 +6,6 @@
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 
-#include "error.h"
 #include "sensor-imu/orientation/est.h"
 #include "viewer.h"
 

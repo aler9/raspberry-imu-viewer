@@ -1,6 +1,8 @@
 
 #pragma once
 
+typedef const char error;
+
 typedef void visualizert;
 
 error* visualizer_init(visualizert** pobj);

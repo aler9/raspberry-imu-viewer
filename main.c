@@ -7,7 +7,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include "error.h"
 #include "sensor-imu/imu.h"
 #include "sensor-imu/imu_auto.h"
 #include "sensor-imu/orientation/vector.h"
