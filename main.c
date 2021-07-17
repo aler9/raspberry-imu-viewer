@@ -54,6 +54,8 @@ static error *run() {
         return err;
     }
 
+    printf("gyro bias: %f, %f, %f\n", gyro_bias.x, gyro_bias.y, gyro_bias.z);
+
     est_euler_acct *est_euler_acc;
     err = est_euler_acc_init(&est_euler_acc, &align_dcm,
         EST_EULER_ACC_DEFAULT_ALPHA);
