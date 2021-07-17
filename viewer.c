@@ -62,7 +62,7 @@ typedef struct {
     uint32_t screen_height;
 } _objt;
 
-error *visualizer_init(visualizert **pobj) {
+error *viewer_init(viewert **pobj) {
     _objt *_obj = malloc(sizeof(_objt));
 
     bcm_host_init();
@@ -167,16 +167,16 @@ error *visualizer_init(visualizert **pobj) {
     return NULL;
 }
 
-void visualizer_draw_start(__attribute__((unused)) visualizert *obj) {
+void viewer_draw_start(__attribute__((unused)) viewert *obj) {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void visualizer_draw_end(visualizert *obj) {
+void viewer_draw_end(viewert *obj) {
     _objt *_obj = (_objt*)obj;
     eglSwapBuffers(_obj->display, _obj->surface);
 }
 
-void visualizer_draw_estimate(visualizert *obj, int pos, estimator_output *eo) {
+void viewer_draw_estimate(viewert *obj, int pos, estimator_output *eo) {
     _objt *_obj = (_objt*)obj;
 
     int row = (pos / COLS);

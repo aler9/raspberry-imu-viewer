@@ -87,8 +87,8 @@ static error *run() {
         return err;
     }
 
-    visualizert *visualizer;
-    err = visualizer_init(&visualizer);
+    viewert *viewer;
+    err = viewer_init(&viewer);
     if(err != NULL) {
         return err;
     }
@@ -110,24 +110,24 @@ static error *run() {
         double dt = (double)(now - prev) / 1000000;
         prev = now;
 
-        visualizer_draw_start(visualizer);
+        viewer_draw_start(viewer);
 
         est_euler_acc_do(est_euler_acc, io.acc_array, &eo);
-        visualizer_draw_estimate(visualizer, 0, &eo);
+        viewer_draw_estimate(viewer, 0, &eo);
 
         est_euler_gyro_do(est_euler_gyro, io.gyro_array, dt, &eo);
-        visualizer_draw_estimate(visualizer, 1, &eo);
+        viewer_draw_estimate(viewer, 1, &eo);
 
         est_euler_gyrounalign_do(est_euler_gyro_unalign, io.gyro_array, dt, &eo);
-        visualizer_draw_estimate(visualizer, 2, &eo);
+        viewer_draw_estimate(viewer, 2, &eo);
 
         est_euler_compl_do(est_euler_compl, io.acc_array, io.gyro_array, dt, &eo);
-        visualizer_draw_estimate(visualizer, 3, &eo);
+        viewer_draw_estimate(viewer, 3, &eo);
 
         est_dcm_compl_do(est_dcm_compl, io.acc_array, io.gyro_array, dt, &eo);
-        visualizer_draw_estimate(visualizer, 4, &eo);
+        viewer_draw_estimate(viewer, 4, &eo);
 
-        visualizer_draw_end(visualizer);
+        viewer_draw_end(viewer);
 
         if((now - last_report) >= 1000000) {
             printf("read per sec: %d\n", read_count);
