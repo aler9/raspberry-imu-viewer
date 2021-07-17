@@ -60,3 +60,7 @@ This tool is intended to:
    ```
    ./raspberry-imu-viewer
    ```
+
+## Links
+
+* https://github.com/aler9/sensor-imu (IMU library used by this project)
