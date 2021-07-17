@@ -26,7 +26,7 @@ static uint32_t clock_usec() {
     return ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
 }
 
-static error* run() {
+static error *run() {
     // disable stdout buffering
     setbuf(stdout, NULL);
 
@@ -35,8 +35,8 @@ static error* run() {
         return "unable to open device /dev/i2c-1";
     }
 
-    imu_autot* imu;
-    error* err = imu_auto_init(&imu, i2c_fd);
+    imu_autot *imu;
+    error *err = imu_auto_init(&imu, i2c_fd);
     if(err != NULL) {
         close(i2c_fd);
         return err;
@@ -54,37 +54,40 @@ static error* run() {
         return err;
     }
 
-    est_euler_acct* est_euler_acc;
-    err = est_euler_acc_init(&est_euler_acc, &align_dcm);
+    est_euler_acct *est_euler_acc;
+    err = est_euler_acc_init(&est_euler_acc, &align_dcm,
+        EST_EULER_ACC_DEFAULT_ALPHA);
     if(err != NULL) {
         return err;
     }
 
-    est_euler_gyrot* est_euler_gyro;
+    est_euler_gyrot *est_euler_gyro;
     err = est_euler_gyro_init(&est_euler_gyro, &align_dcm, &gyro_bias);
     if(err != NULL) {
         return err;
     }
 
-    est_euler_gyrounalignt* est_euler_gyro_unalign;
+    est_euler_gyrounalignt *est_euler_gyro_unalign;
     err = est_euler_gyrounalign_init(&est_euler_gyro_unalign, &gyro_bias);
     if(err != NULL) {
         return err;
     }
 
-    est_euler_complt* est_euler_compl;
-    err = est_euler_compl_init(&est_euler_compl, &align_dcm, &gyro_bias);
+    est_euler_complt *est_euler_compl;
+    err = est_euler_compl_init(&est_euler_compl, &align_dcm, &gyro_bias,
+        EST_EULER_COMPL_DEFAULT_ALPHA);
     if(err != NULL) {
         return err;
     }
 
-    est_dcm_complt* est_dcm_compl;
-    err = est_dcm_compl_init(&est_dcm_compl, &align_dcm, &gyro_bias);
+    est_dcm_complt *est_dcm_compl;
+    err = est_dcm_compl_init(&est_dcm_compl, &align_dcm, &gyro_bias,
+        EST_DCM_COMPL_DEFAULT_ALPHA);
     if(err != NULL) {
         return err;
     }
 
-    visualizert* visualizer;
+    visualizert *visualizer;
     err = visualizer_init(&visualizer);
     if(err != NULL) {
         return err;
@@ -140,7 +143,7 @@ static error* run() {
 }
 
 int main() {
-    error* err = run();
+    error *err = run();
     if(err != NULL) {
         printf("ERR: %s\n", err);
         exit(1);

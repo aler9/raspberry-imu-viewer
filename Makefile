@@ -1,7 +1,7 @@
 
-all: build_direct
+all: build-direct
 
-build_direct:
+build-direct:
 	[ -n "$$IN_DOCKER" ] || git submodule status | grep -vq '^-' || git submodule update --init --recursive
 	@$(MAKE) -f Makefile.src
 
@@ -17,19 +17,19 @@ WORKDIR /s
 COPY *.h *.c Makefile Makefile.src ./
 COPY sensor-imu ./sensor-imu
 ENV IN_DOCKER 1
-RUN make build_direct
+RUN make build-direct
 endef
 export DOCKERFILE
 
-build_cross:
+build-cross:
 	git submodule status | grep -vq '^-' || git submodule update --init --recursive
 	docker run --rm --privileged multiarch/qemu-user-static:register --reset --credential yes >/dev/null
 	echo "$$DOCKERFILE" | docker build . -f - -t temp
 
-TARGET ?= pi@192.168.2.170
+TARGET ?= pi@192.168.2.182
 BIN = raspberry-imu-viewer
 
-deploy: build_cross
+deploy: build-cross
 	ssh $(TARGET) "killall $(BIN) || exit 0"
 	docker run --rm temp cat /s/$(BIN) \
 	| ssh $(TARGET) "tee ./$(BIN) >/dev/null"
