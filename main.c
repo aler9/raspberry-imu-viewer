@@ -8,7 +8,6 @@
 #include <unistd.h>
 
 #include "sensor-imu/imu.h"
-#include "sensor-imu/imu_auto.h"
 #include "sensor-imu/orientation/align_dcm.h"
 #include "sensor-imu/orientation/est.h"
 #include "sensor-imu/orientation/est_dcm_compl.h"
@@ -36,8 +35,8 @@ static error *run() {
         return "unable to open device /dev/i2c-1";
     }
 
-    imu_autot *imu;
-    error *err = imu_auto_init(&imu, i2c_fd);
+    imut *imu;
+    error *err = imu_init(&imu, i2c_fd);
     if (err != NULL) {
         close(i2c_fd);
         return err;
@@ -103,7 +102,7 @@ static error *run() {
     estimator_output eo;
 
     while (1) {
-        err = imu_auto_read(imu, &io);
+        err = imu_read(imu, &io);
         if (err != NULL) {
             return err;
         }
