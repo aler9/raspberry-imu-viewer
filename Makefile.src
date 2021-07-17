@@ -6,7 +6,8 @@ OBJECTS = \
 	$(patsubst %.c,%.o,$(wildcard sensor-imu/orientation/*.c)) \
 	$(patsubst %.c,%.o,$(wildcard *.c))
 
-CFLAGS += -Wall \
+CFLAGS += \
+	-Wall \
 	-Wextra \
 	-Werror \
 	-O3 \

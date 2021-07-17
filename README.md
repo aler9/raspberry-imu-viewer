@@ -4,6 +4,7 @@
 ![](front.jpg)
 
 This tool allows to view in 3D the output of various orientation estimation algorithms, fed by a IMU sensor, connected to a Raspberry Pi. Supported sensors are:
+
 * MPU6000 (I2C mode)
 * MPU6050 (I2C mode)
 * MPU6500 (I2C mode)
@@ -12,9 +13,9 @@ This tool allows to view in 3D the output of various orientation estimation algo
 * ICM20602 (I2C mode)
 
 This tool is intended to:
+
 * provide a zero-dependencies, ready-to-use tool to test IMUs
 * provide a starting point to anyone wishing to explore the field of orientation estimation
-
 
 ## Build & launch
 
@@ -29,17 +30,17 @@ This tool is intended to:
    i2c-dev
    ```
 
-   a reboot is required.
+   then reboot the system.
 
-2. clone this repository
+2. install dependencies
+   ```
+   sudo apt install -y git make gcc libc6-dev libi2c-dev libraspberrypi-dev
+   ```
+
+3. clone this repository
    ```
    git clone https://github.com/gswly/raspberry-imu-viewer
    cd raspberry-imu-viewer
-   ```
-
-3. install dependencies
-   ```
-   sudo apt install -y make gcc libc6-dev libi2c-dev libraspberrypi-dev
    ```
 
 4. build
