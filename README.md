@@ -1,10 +1,10 @@
 
 # raspberry-imu-viewer
 
-![](front.jpg)
-
 [![Lint](https://github.com/aler9/raspberry-imu-viewer/workflows/lint/badge.svg)](https://github.com/aler9/raspberry-imu-viewer/actions?query=workflow:lint)
 [![Test](https://github.com/aler9/raspberry-imu-viewer/workflows/test/badge.svg)](https://github.com/aler9/raspberry-imu-viewer/actions?query=workflow:test)
+
+![](front.jpg)
 
 This tool allows to view in 3D the output of various orientation estimation algorithms, fed by a IMU sensor, connected to a Raspberry Pi. Supported sensors are:
 
