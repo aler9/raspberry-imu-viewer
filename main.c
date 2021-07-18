@@ -36,7 +36,8 @@ static error *run() {
     }
 
     imut *imu;
-    error *err = imu_init(&imu, i2c_fd);
+    error *err =
+        imu_init(&imu, i2c_fd, IMU_ACC_RANGE_2G, IMU_GYRO_RANGE_250DPS);
     if (err != NULL) {
         close(i2c_fd);
         return err;
