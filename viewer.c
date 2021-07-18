@@ -239,9 +239,9 @@ void viewer_draw_estimate(viewert *obj, int pos, estimator_output *eo) {
 
     glLoadIdentity();
     glTranslatef(0, 0, -40.0f);
-    glRotatef(eo->pitch * (180.0f / M_PI), 1.0f, 0.f, 0.0f);
-    glRotatef(eo->yaw * (180.0f / M_PI), 0.0f, 1.0f, 0.0f);
-    glRotatef(-eo->roll * (180.0f / M_PI), 0.0f, 0.0f, 1.0f);
+    glRotatef(eo->pitch, 1.0f, 0.f, 0.0f);
+    glRotatef(eo->yaw, 0.0f, 1.0f, 0.0f);
+    glRotatef(-eo->roll, 0.0f, 0.0f, 1.0f);
 
     for (int face = 0; face < 6; face++) {
         glColor4f(color_ptr[face * 3 + 0], color_ptr[face * 3 + 1],
