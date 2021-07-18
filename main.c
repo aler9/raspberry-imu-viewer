@@ -30,28 +30,24 @@ static error *run() {
     // disable stdout buffering
     setbuf(stdout, NULL);
 
-    int i2c_fd = open("/dev/i2c-1", O_RDWR);
-    if (i2c_fd < 0) {
-        return "unable to open device /dev/i2c-1";
-    }
-
     imut *imu;
     error *err =
-        imu_init(&imu, i2c_fd, IMU_ACC_RANGE_2G, IMU_GYRO_RANGE_250DPS);
+        imu_init(&imu, "/dev/i2c-1", IMU_ACC_RANGE_2G, IMU_GYRO_RANGE_250DPS);
     if (err != NULL) {
-        close(i2c_fd);
         return err;
     }
 
     matrix align_dcm;
     err = align_dcm_init(&align_dcm, imu);
     if (err != NULL) {
+        imu_destroy(imu);
         return err;
     }
 
     vector gyro_bias;
     err = gyro_bias_init(&gyro_bias, imu);
     if (err != NULL) {
+        imu_destroy(imu);
         return err;
     }
 
@@ -61,18 +57,21 @@ static error *run() {
     err = est_euler_acc_init(&est_euler_acc, &align_dcm,
                              EST_EULER_ACC_DEFAULT_ALPHA);
     if (err != NULL) {
+        imu_destroy(imu);
         return err;
     }
 
     est_euler_gyrot *est_euler_gyro;
     err = est_euler_gyro_init(&est_euler_gyro, &align_dcm, &gyro_bias);
     if (err != NULL) {
+        imu_destroy(imu);
         return err;
     }
 
     est_euler_gyrounalignt *est_euler_gyro_unalign;
     err = est_euler_gyrounalign_init(&est_euler_gyro_unalign, &gyro_bias);
     if (err != NULL) {
+        imu_destroy(imu);
         return err;
     }
 
@@ -80,6 +79,7 @@ static error *run() {
     err = est_euler_compl_init(&est_euler_compl, &align_dcm, &gyro_bias,
                                EST_EULER_COMPL_DEFAULT_ALPHA);
     if (err != NULL) {
+        imu_destroy(imu);
         return err;
     }
 
@@ -87,12 +87,14 @@ static error *run() {
     err = est_dcm_compl_init(&est_dcm_compl, &align_dcm, &gyro_bias,
                              EST_DCM_COMPL_DEFAULT_ALPHA);
     if (err != NULL) {
+        imu_destroy(imu);
         return err;
     }
 
     viewert *viewer;
     err = viewer_init(&viewer);
     if (err != NULL) {
+        imu_destroy(imu);
         return err;
     }
 
@@ -105,6 +107,7 @@ static error *run() {
     while (1) {
         err = imu_read(imu, &io);
         if (err != NULL) {
+            imu_destroy(imu);
             return err;
         }
         read_count++;
