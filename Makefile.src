@@ -1,4 +1,3 @@
-
 BIN = raspberry-imu-viewer
 
 OBJECTS = \
@@ -19,8 +18,8 @@ LDFLAGS += -L/opt/vc/lib \
 
 all: $(BIN)
 
-$(BIN): $(OBJECTS)
-	gcc $(OBJECTS) $(LDFLAGS) -o $@
-
 %.o: %.c
 	gcc $(CFLAGS) -c $< -o $@
+
+$(BIN): $(OBJECTS)
+	gcc $(OBJECTS) $(LDFLAGS) -o $@

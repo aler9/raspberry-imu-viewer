@@ -2,7 +2,7 @@ build-direct:
 	[ -n "$$IN_DOCKER" ] || git submodule status | grep -vq '^-' || git submodule update --init --recursive
 	@$(MAKE) -f Makefile.src
 
-define DOCKERFILE
+define DOCKERFILE_BUILD
 FROM balenalib/raspberry-pi-debian:stretch
 RUN apt-get update && apt-get install -y --no-install-recommends \
     make \
@@ -11,14 +11,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libi2c-dev \
     libraspberrypi-dev
 WORKDIR /s
-COPY *.h *.c Makefile Makefile.src ./
+COPY . ./
 COPY sensor-imu ./sensor-imu
 ENV IN_DOCKER 1
 RUN make build-direct
 endef
-export DOCKERFILE
+export DOCKERFILE_BUILD
 
 build-cross:
 	git submodule status | grep -vq '^-' || git submodule update --init --recursive
 	docker run --rm --privileged multiarch/qemu-user-static:register --reset --credential yes >/dev/null
-	echo "$$DOCKERFILE" | docker build . -f - -t temp
+	echo "$$DOCKERFILE_BUILD" | docker build . -f - -t temp
