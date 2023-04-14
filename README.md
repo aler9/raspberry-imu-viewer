@@ -64,4 +64,4 @@ This tool is intended to:
 
 ## Links
 
-* https://github.com/aler9/sensor-imu (IMU library used by this project)
+* [sensor-imu (IMU library used by this project)](https://github.com/aler9/sensor-imu)
