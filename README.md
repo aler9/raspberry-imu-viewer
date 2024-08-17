@@ -40,7 +40,15 @@ This tool is intended to:
 2. Install the dependencies:
 
    ```
-   sudo apt install -y git make gcc libc6-dev libi2c-dev libraspberrypi-dev
+   sudo apt install -y \
+   git \
+   make \
+   gcc \
+   libc6-dev \
+   libi2c-dev \
+   libraspberrypi-dev \
+   libegl-dev \
+   libgles-dev
    ```
 
 3. Clone this repository:

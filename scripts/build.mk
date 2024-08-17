@@ -3,13 +3,15 @@ build-direct:
 	@$(MAKE) -f Makefile.src
 
 define DOCKERFILE_BUILD
-FROM balenalib/raspberry-pi-debian:stretch
+FROM $(RPI_IMAGE)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    make \
-    gcc \
-    libc6-dev \
-    libi2c-dev \
-    libraspberrypi-dev
+	make \
+	gcc \
+	libc6-dev \
+	libi2c-dev \
+	libraspberrypi-dev \
+	libegl-dev \
+	libgles-dev
 WORKDIR /s
 COPY . ./
 COPY sensor-imu ./sensor-imu
