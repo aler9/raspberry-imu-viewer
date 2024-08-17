@@ -19,7 +19,7 @@ LDFLAGS += -L/opt/vc/lib \
 all: $(BIN)
 
 %.o: %.c
-	gcc $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BIN): $(OBJECTS)
-	gcc $(OBJECTS) $(LDFLAGS) -o $@
+	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
