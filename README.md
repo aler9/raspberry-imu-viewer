@@ -1,6 +1,14 @@
 
 # raspberry-imu-viewer
 
+## Deprecation notice
+
+This project makes use of some EGL functions that were unfortunately removed from the Raspberry Pi OS, starting from Bullseye.
+
+Using this on recent Raspberry Pi OS versions requires some manual refactoring.
+
+## Info
+
 [![Lint](https://github.com/aler9/raspberry-imu-viewer/workflows/lint/badge.svg)](https://github.com/aler9/raspberry-imu-viewer/actions?query=workflow:lint)
 [![Test](https://github.com/aler9/raspberry-imu-viewer/workflows/test/badge.svg)](https://github.com/aler9/raspberry-imu-viewer/actions?query=workflow:test)
 
